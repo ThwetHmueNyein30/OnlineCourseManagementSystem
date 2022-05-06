@@ -1,6 +1,5 @@
 package com.thn.onlinecoursemanagement.controller;
 
-import com.thn.onlinecoursemanagement.entities.Company;
 import com.thn.onlinecoursemanagement.entities.Course;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.repositories.CourseRepository;
@@ -38,8 +37,16 @@ public class CourseController {
            response.setMessage("No course");
         }
         try {
-            course =courseRepository.save(new Course(course.getName(), course.getContent(), course.getDocumentPath(), course.getFee(), LocalDateTime.now(), course.getRegisteredFrom(), course.getRegisteredTo(),
-                    course.getStatus(), course.getTeacherId(), course.getImageUrl()));
+            course =courseRepository.save(new Course(course.getName(),
+                    course.getContent(),
+                    course.getDocumentPath(),
+                    course.getFee(),
+                    LocalDateTime.now(),
+                    course.getRegisteredFrom(),
+                    course.getRegisteredTo(),
+                    course.getStatus(),
+                    course.getTeacherId(),
+                    course.getImageUrl()));
             response.setResult(course);
             response.setMessage("Successfully upload!");
         }

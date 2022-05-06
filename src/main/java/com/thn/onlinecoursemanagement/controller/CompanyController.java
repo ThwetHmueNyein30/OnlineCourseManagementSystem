@@ -30,7 +30,7 @@ public class CompanyController {
     public CompanyController(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
     }
-    private static String UPLOAD_FOLDER = "/Users/mobile-5/Desktop/";
+    private static String UPLOAD_FOLDER = "/Users/mobile-5/Downloads/SpringBoot/OnlineCourseManagement/src/main/upload/";
 
     @PostMapping()
     BaseResponse registerCompany(@RequestBody Company company) {
@@ -46,13 +46,13 @@ public class CompanyController {
             response.setMessage("Successfully upload!");
             response.setResult(company);
         }catch (Exception e){
-            log.info("Exception : {} ", e);
+            log.info("Exception : ", e);
             response.setMessage("Error");
         }
         return response;
     }
 
-    @PutMapping("/upload/{id}")
+    @PostMapping("/upload/{id}")
     BaseResponse handleFileUpload(@PathVariable Long id, @RequestParam("file") MultipartFile file ) {
         BaseResponse response = new BaseResponse();
         response.setStatus(true);
@@ -131,8 +131,10 @@ public class CompanyController {
         response.setStatus(true);
         response.setDateTime(LocalDateTime.now());
         for(Company company: companyRepository.findAll()){
-            CompanyResponse c= new CompanyResponse(company.getId(),company.getName(),company.getAddress(),company.getCreatedAt(),company.getImageUrl().getBytes());
-            companyList.add(c);
+            CompanyResponse companyResponse = new CompanyResponse(company.getId(), company.getName(),
+                    company.getAddress(), company.getCreatedAt(), company.getImageUrl() == null ? null : company.getImageUrl().getBytes());
+
+            companyList.add(companyResponse);
         }
         response.setResult(companyList);
 
