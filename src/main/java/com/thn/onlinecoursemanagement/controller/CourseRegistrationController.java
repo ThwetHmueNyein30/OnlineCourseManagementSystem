@@ -51,13 +51,13 @@ public class CourseRegistrationController {
         response.setDateTime(LocalDateTime.now());
 
         Optional<Person> optionalPerson=personRepository.findById(courseRegisterRequestBody.getStudentId());
-        if (optionalPerson.isEmpty()) {
+        if (!optionalPerson.isPresent()) {
             response.setMessage("Don't have any person for that id!");
             return response;
         }
 
         Optional<Course> optionalCourse=courseRepository.findById(courseRegisterRequestBody.getCourseId());
-        if (optionalCourse.isEmpty()) {
+        if (!optionalCourse.isPresent()) {
             response.setMessage("Don't have any course for that id!");
             return response;
         }
@@ -70,7 +70,7 @@ public class CourseRegistrationController {
         }
         Optional<Role> optionalRole = roleRepository.findByRoleId(person.getRoleId());
 
-        if (optionalRole.isEmpty()) {
+        if (!optionalRole.isPresent()) {
             response.setMessage("Don't have any role for that role id!");
             return response;
         }

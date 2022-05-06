@@ -1,16 +1,13 @@
 package com.thn.onlinecoursemanagement.controller;
 
-import com.thn.onlinecoursemanagement.entities.CompanyResponse;
+import com.thn.onlinecoursemanagement.payload.response.CompanyResponse;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.entities.Company;
 import com.thn.onlinecoursemanagement.repositories.CompanyRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
