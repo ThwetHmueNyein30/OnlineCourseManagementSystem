@@ -1,5 +1,6 @@
 package com.thn.onlinecoursemanagement.controller;
 
+import com.thn.onlinecoursemanagement.config.AppConfig;
 import com.thn.onlinecoursemanagement.payload.response.BaseImageResponse;
 import com.thn.onlinecoursemanagement.payload.response.CompanyResponse;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.thn.onlinecoursemanagement.constant.Constant.UPLOAD_FOLDER;
 
 /**
  * @author ThwetHmueNyein
@@ -34,9 +34,11 @@ import static com.thn.onlinecoursemanagement.constant.Constant.UPLOAD_FOLDER;
 @Slf4j
 public class CompanyController {
     final CompanyRepository companyRepository;
+    final AppConfig appConfig;
 
-    public CompanyController(CompanyRepository companyRepository) {
+    public CompanyController(CompanyRepository companyRepository, AppConfig appConfig) {
         this.companyRepository = companyRepository;
+        this.appConfig = appConfig;
     }
 
     @PostMapping()
@@ -71,7 +73,7 @@ public class CompanyController {
         }
         try {
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(UPLOAD_FOLDER + file.getOriginalFilename());
+            Path path = Paths.get(appConfig.getUploadFolder() + file.getOriginalFilename());
             Files.write(path, bytes);
             Optional<Company> optionalCompany=companyRepository.findById(id);
             if(optionalCompany.isPresent()){
