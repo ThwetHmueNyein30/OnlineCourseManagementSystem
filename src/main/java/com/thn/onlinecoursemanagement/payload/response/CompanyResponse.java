@@ -13,11 +13,6 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyResponse {
-    private Long id;
-    private String name;
+public class CompanyResponse extends BaseImageResponse{
     private String address;
-    private LocalDateTime createdAt;
-    private byte[] imageUrl;
-
 }

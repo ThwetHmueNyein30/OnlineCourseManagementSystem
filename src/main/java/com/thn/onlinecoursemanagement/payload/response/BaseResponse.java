@@ -3,6 +3,7 @@ package com.thn.onlinecoursemanagement.payload.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -17,10 +18,8 @@ import java.util.Objects;
 public class BaseResponse {
     private Boolean status;
     private Object result;
+    @CreationTimestamp
     private LocalDateTime dateTime;
     private String message;
 
-    public void setDateTime() {
-        this.dateTime = LocalDateTime.now();
-    }
 }

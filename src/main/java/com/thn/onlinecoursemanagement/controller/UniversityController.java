@@ -14,7 +14,6 @@ import java.util.Optional;
  */
 
 
-
 @RestController
 @RequestMapping("university")
 public class UniversityController {
@@ -28,12 +27,11 @@ public class UniversityController {
     BaseResponse createUniversity(@RequestBody University university) {
         BaseResponse response = new BaseResponse();
         response.setStatus(true);
-        response.setDateTime(LocalDateTime.now());
-        if(university==null){
+        if (university == null) {
             response.setMessage("No university data!");
             return response;
         }
-        university=universityRepository.save(new University(university.getName(),university.getAddress(),LocalDateTime.now(),university.getImageUrl()));
+        university = universityRepository.save(new University(university.getName(), university.getAddress(), LocalDateTime.now(), university.getImageUrl()));
         response.setResult(university);
         response.setMessage("Success");
         return response;
@@ -43,8 +41,10 @@ public class UniversityController {
     BaseResponse updateUniversity(@PathVariable Long id, @RequestBody University university) {
         BaseResponse response = new BaseResponse();
         response.setStatus(true);
-        response.setDateTime(LocalDateTime.now());
-
+        if (university == null) {
+            response.setMessage("No request body");
+            return response;
+        }
         Optional<University> optionalUniversity = universityRepository.findById(id);
         if (optionalUniversity.isPresent()) {
             University u = optionalUniversity.get();
@@ -54,28 +54,28 @@ public class UniversityController {
             u.setImageUrl(university.getImageUrl());
             universityRepository.save(u);
             response.setResult(u);
-
+            response.setMessage("Successfully updated");
         } else {
             university = universityRepository.save(university);
             response.setResult(university);
+            response.setMessage("Successfully inserted");
+
         }
-        response.setMessage("Success");
         return response;
     }
 
     @DeleteMapping("{id}")
-    BaseResponse deleteUniversity(@PathVariable Long id){
+    BaseResponse deleteUniversity(@PathVariable Long id) {
         BaseResponse response = new BaseResponse();
         response.setStatus(true);
-        response.setDateTime(LocalDateTime.now());
 
-        Optional<University> optionalUniversity=universityRepository.findById(id);
-        if(optionalUniversity.isPresent()){
-            University p=optionalUniversity.get();
+        Optional<University> optionalUniversity = universityRepository.findById(id);
+        if (optionalUniversity.isPresent()) {
+            University p = optionalUniversity.get();
             universityRepository.deleteById(id);
             response.setMessage("Success");
             response.setResult(p);
-        }else{
+        } else {
             response.setResult("There is no data with that ID.");
         }
         return response;
@@ -87,7 +87,6 @@ public class UniversityController {
         BaseResponse response = new BaseResponse();
         response.setStatus(true);
         response.setDateTime(LocalDateTime.now());
-
         response.setResult(universityRepository.findAll());
         return response;
     }

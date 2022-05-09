@@ -24,11 +24,13 @@ public class RoleController {
 
     @GetMapping
     BaseResponse getRole() {
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(true);
-        baseResponse.setDateTime(LocalDateTime.now());
-        baseResponse.setResult(roleRepository.findAll());
-        return baseResponse;
+        BaseResponse response = new BaseResponse();
+        response.setStatus(true);
+        response.setDateTime(LocalDateTime.now());
+        response.setResult(roleRepository.findAll());
+        response.setMessage("Success");
+
+        return response;
     }
 
     @PostMapping()
@@ -53,18 +55,24 @@ public class RoleController {
         response.setStatus(true);
         response.setDateTime(LocalDateTime.now());
 
+        if(role==null){
+            response.setMessage("No Request Body");
+            return response;
+        }
+
         Optional<Role> optionalRole = roleRepository.findById(id);
         if (optionalRole.isPresent()) {
             Role r = optionalRole.get();
             r.setRoleId(role.getRoleId());
             r.setName(r.getName());
             response.setResult(r);
+            response.setMessage("Successfully updated");
 
         } else {
             role = roleRepository.save(role);
             response.setResult(role);
+            response.setMessage("Successfully Inserted");
         }
-        response.setMessage("Success");
         return response;
     }
 
@@ -80,7 +88,7 @@ public class RoleController {
             Role role = optionalRole.get();
             roleRepository.deleteById(id);
             response.setResult(role);
-            response.setMessage("Success");
+            response.setMessage("Successfully deleted");
         } else {
             response.setStatus(false);
             response.setResult("There is no data with that ID.");

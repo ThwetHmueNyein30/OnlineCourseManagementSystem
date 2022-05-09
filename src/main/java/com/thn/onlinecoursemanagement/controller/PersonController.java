@@ -46,6 +46,11 @@ public class PersonController {
         response.setStatus(true);
         response.setDateTime(LocalDateTime.now());
 
+        if(person ==null){
+            response.setMessage("No Request Body");
+            return response;
+        }
+
         Optional<Person> optionalPerson = personRepository.findById(id);
         if (optionalPerson.isPresent()) {
             Person p = optionalPerson.get();
@@ -61,12 +66,13 @@ public class PersonController {
             person.setPhone(person.getPhone());
             personRepository.save(p);
             response.setResult(p);
-
+            response.setMessage("Successfully updated");
         } else {
             person = personRepository.save(person);
             response.setResult(person);
+            response.setMessage("Successfully inserted");
+
         }
-        response.setMessage("Success");
         return response;
     }
 
@@ -93,6 +99,7 @@ public class PersonController {
         BaseResponse response = new BaseResponse();
         response.setStatus(true);
         response.setResult(personRepository.findAll());
+        response.setMessage("Success");
         return response;
     }
 

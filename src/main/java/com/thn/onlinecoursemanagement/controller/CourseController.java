@@ -12,6 +12,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.thn.onlinecoursemanagement.constant.Constant.UPLOAD_FOLDER;
+
 /**
  * @author ThwetHmueNyein
  * @Date 02/05/2022
@@ -21,7 +23,6 @@ import java.util.Optional;
 @RequestMapping("course")
 public class CourseController {
     final CourseRepository courseRepository;
-    private static String UPLOAD_FOLDER = "/Users/mobile-5/Desktop/";
 
 
     public CourseController(CourseRepository courseRepository) {
@@ -34,7 +35,8 @@ public class CourseController {
         response.setStatus(true);
         response.setDateTime(LocalDateTime.now());
         if(course == null){
-           response.setMessage("No course");
+           response.setMessage("No request body");
+           return response;
         }
         try {
             course =courseRepository.save(new Course(course.getName(),
@@ -51,13 +53,13 @@ public class CourseController {
             response.setMessage("Successfully upload!");
         }
         catch (Exception e){
-            response.setMessage("Error");
+            response.setMessage("Fail to upload");
         }
         return response;
     }
 
-    @PutMapping("/upload/{id}")
-    BaseResponse handleFileUpload(@PathVariable Long id, @RequestParam("file") MultipartFile file ) {
+    @PostMapping("/upload/{id}")
+    BaseResponse uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file ) {
         BaseResponse response = new BaseResponse();
         response.setStatus(true);
         response.setDateTime(LocalDateTime.now());
@@ -90,7 +92,10 @@ public class CourseController {
     BaseResponse updateCourse(@PathVariable Long id, @RequestBody Course course) {
         BaseResponse response = new BaseResponse();
         response.setStatus(true);
-        response.setDateTime(LocalDateTime.now());
+        if(course==null){
+            response.setMessage("No Request Body");
+            return response;
+        }
         Optional<Course> optionalCourse = courseRepository.findById(id);
         if (optionalCourse.isPresent()) {
             Course c = optionalCourse.get();
@@ -106,11 +111,12 @@ public class CourseController {
             c.setImageUrl(course.getImageUrl());
             courseRepository.save(c);
             response.setResult(c);
+            response.setMessage("Successfully updated");
         } else {
             course = courseRepository.save(course);
             response.setResult(course);
+            response.setMessage("Successfully Inserted");
         }
-        response.setMessage("Success");
         return response;
     }
 
@@ -124,7 +130,7 @@ public class CourseController {
         if(optionalCourse.isPresent()){
             Course c=optionalCourse.get();
             courseRepository.deleteById(id);
-            response.setMessage("Success");
+            response.setMessage("Successfully Deleted");
             response.setResult(c);
         }else{
             response.setMessage("There is no data with that ID.");
@@ -139,6 +145,7 @@ public class CourseController {
         response.setStatus(true);
         response.setDateTime(LocalDateTime.now());
         response.setResult(courseRepository.findAll());
+        response.setMessage("Success");
         return response;
     }
 

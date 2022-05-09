@@ -9,6 +9,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import static com.thn.onlinecoursemanagement.constant.Constant.BASE_URL;
+
 /**
  * @author ThwetHmueNyein
  * @Date 03/05/2022
@@ -21,7 +23,6 @@ public class SMSService {
     @Autowired
     RestTemplate restTemplate;
 
-    final String baseUrl = "http://10.201.3.251:9898/smppgw/v1.0/action/submit";
 
     public String createSMS(SMSRequestBody requestBody) {
         HttpHeaders headers = new HttpHeaders();
@@ -31,7 +32,7 @@ public class SMSService {
 
         log.info("request: {}", logMessage(entity));
         try {
-            stringResponseEntity = restTemplate.exchange(baseUrl, HttpMethod.POST, entity, String.class);
+            stringResponseEntity = restTemplate.exchange(BASE_URL, HttpMethod.POST, entity, String.class);
         } catch (Exception e) {
             log.info("Call api fail: ", e);
             return "failed";
