@@ -7,6 +7,7 @@ import com.thn.onlinecoursemanagement.ewallet_database.pools.EWalletPool;
 import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +22,7 @@ import static com.thn.onlinecoursemanagement.constant.Constant.*;
  * @Date 09/05/2022
  */
 
-
+@Component
 public class EWalletHistoryImpl implements EWalletHistoryRepository {
 
     @Autowired

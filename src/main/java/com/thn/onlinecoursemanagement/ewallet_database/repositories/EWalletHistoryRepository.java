@@ -10,7 +10,6 @@ import java.util.List;
  * @Date 09/05/2022
  */
 
-@Component
 public interface EWalletHistoryRepository {
 
     List<EWalletHistory> getAllEWalletHistory(Long id);
