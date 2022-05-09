@@ -1,5 +1,6 @@
 package com.thn.onlinecoursemanagement.controller;
 
+import com.thn.onlinecoursemanagement.config.AppConfig;
 import com.thn.onlinecoursemanagement.entities.Course;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.repositories.CourseRepository;
@@ -12,8 +13,6 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static com.thn.onlinecoursemanagement.constant.Constant.UPLOAD_FOLDER;
-
 /**
  * @author ThwetHmueNyein
  * @Date 02/05/2022
@@ -23,10 +22,12 @@ import static com.thn.onlinecoursemanagement.constant.Constant.UPLOAD_FOLDER;
 @RequestMapping("course")
 public class CourseController {
     final CourseRepository courseRepository;
+    final AppConfig appConfig;
 
 
-    public CourseController(CourseRepository courseRepository) {
+    public CourseController(CourseRepository courseRepository, AppConfig appConfig) {
         this.courseRepository = courseRepository;
+        this.appConfig = appConfig;
     }
 
     @PostMapping()
@@ -70,7 +71,7 @@ public class CourseController {
         }
         try {
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(UPLOAD_FOLDER + file.getOriginalFilename());
+            Path path = Paths.get(appConfig.getUploadFolder() + file.getOriginalFilename());
             Files.write(path, bytes);
             Optional<Course> optionalCourse=courseRepository.findById(id);
             if(optionalCourse.isPresent()){
