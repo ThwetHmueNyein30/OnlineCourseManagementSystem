@@ -1,4 +1,4 @@
-package com.thn.onlinecoursemanagement.constant;
+package com.thn.onlinecoursemanagement.util;
 
 /**
  * @author ThwetHmueNyein

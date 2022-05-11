@@ -15,4 +15,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CompanyResponse extends BaseImageResponse{
     private String address;
+
+    public CompanyResponse(Long id, String name, LocalDateTime createdAt, String imageUrl, String address) {
+        super(id, name, createdAt, imageUrl);
+        this.address = address;
+    }
 }

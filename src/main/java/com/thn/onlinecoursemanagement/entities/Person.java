@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author ThwetHmueNyein
@@ -27,7 +28,7 @@ public class Person {
     private String name;
     private String address;
     private LocalDateTime createdAt;
-    private LocalDateTime birthDay;
+    private Date birthDay;
     private Long roleId;
     private Long universityId;
     private Long companyId;
@@ -36,7 +37,7 @@ public class Person {
     private String phone;
     private String email;
 
-    public Person(String name, String address, LocalDateTime createdAt, LocalDateTime birthDay, Long roleId, Long universityId, Long companyId, Boolean status, String imageUrl, String phone, String email) {
+    public Person(String name, String address, LocalDateTime createdAt, Date birthDay, Long roleId, Long universityId, Long companyId, Boolean status, String imageUrl, String phone, String email) {
         this.name = name;
         this.address = address;
         this.createdAt = createdAt;

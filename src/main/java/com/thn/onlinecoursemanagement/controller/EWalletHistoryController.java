@@ -1,10 +1,9 @@
 package com.thn.onlinecoursemanagement.controller;
 
-import com.thn.onlinecoursemanagement.entities.Company;
 import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletHistory;
 import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletHistoryRepository;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
-import org.springframework.data.repository.query.Param;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -14,6 +13,7 @@ import java.time.LocalDateTime;
  * @Date 09/05/2022
  */
 
+@Slf4j
 @RestController
 @RequestMapping("ewallet-history")
 public class EWalletHistoryController {
@@ -25,27 +25,42 @@ public class EWalletHistoryController {
     }
 
     @GetMapping("{id}")
-    BaseResponse getAllEWalletHistory(@PathVariable Long ownerId){
-        BaseResponse response=new BaseResponse();
-        response.setStatus(true);
-        response.setResult(eWalletHistoryRepository.getAllEWalletHistory(ownerId));
-        return response;
+    @CrossOrigin
+    BaseResponse getAllEWalletHistory(@PathVariable Long id) {
+        BaseResponse response = new BaseResponse();
+        response.setDateTime(LocalDateTime.now());
+        try {
+            response.setStatus(true);
+            response.setResult(eWalletHistoryRepository.getAllEWalletHistory(id));
+            response.setMessage("Success");
+            return response;
+        } catch (Exception e) {
+            response.setStatus(false);
+            response.setMessage("Failure");
+            log.info("Exception : ", e);
+            return response;
+        }
     }
 
     @PostMapping
-    BaseResponse createEWalletHistory(@RequestBody EWalletHistory eWalletHistory){
-        BaseResponse response=new BaseResponse();
-        response.setStatus(true);
-        if(eWalletHistory==null){
+    @CrossOrigin
+    BaseResponse createEWalletHistory(@RequestBody EWalletHistory eWalletHistory) {
+        BaseResponse response = new BaseResponse();
+        response.setDateTime(LocalDateTime.now());
+        if (eWalletHistory == null) {
+            response.setStatus(false);
             response.setMessage("No request body");
             return response;
         }
-        try{
-           eWalletHistoryRepository.insertEWalletHistory(eWalletHistory);
+        try {
+            eWalletHistoryRepository.insertEWalletHistory(eWalletHistory);
             response.setResult(eWalletHistory);
+            response.setStatus(true);
             response.setMessage("Successfully upload!");
-        }catch (Exception e){
+        } catch (Exception e) {
+            response.setStatus(false);
             response.setMessage("Fail to upload");
+            log.info("Exception : ", e);
         }
         return response;
     }

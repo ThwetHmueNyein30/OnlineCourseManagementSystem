@@ -27,9 +27,10 @@ public class CourseRegistration {
     private Double fee;
     private LocalDateTime createdAt;
 
-    public CourseRegistration(Long personId, Long courseId, Double fee) {
+    public CourseRegistration(Long personId, Long courseId, Double fee, LocalDateTime createdAt) {
         this.personId = personId;
         this.courseId = courseId;
         this.fee = fee;
+        this.createdAt = createdAt;
     }
 }

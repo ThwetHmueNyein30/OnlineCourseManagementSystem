@@ -28,7 +28,6 @@ public class Course {
     private Long id;
     private String name;
     private String content;
-    private String documentPath;
     private Double fee;
     private LocalDateTime createdAt;
     private LocalDateTime registeredTo;
@@ -37,10 +36,9 @@ public class Course {
     private Long teacherId;
     private String imageUrl;
 
-    public Course(String name, String content, String documentPath, Double fee, LocalDateTime createdAt, LocalDateTime registeredTo, LocalDateTime registeredFrom, Boolean status, Long teacherId, String imageUrl) {
+    public Course(String name, String content,Double fee, LocalDateTime createdAt, LocalDateTime registeredTo, LocalDateTime registeredFrom, Boolean status, Long teacherId, String imageUrl) {
         this.name = name;
         this.content = content;
-        this.documentPath = documentPath;
         this.fee = fee;
         this.createdAt = createdAt;
         this.registeredTo = registeredTo;

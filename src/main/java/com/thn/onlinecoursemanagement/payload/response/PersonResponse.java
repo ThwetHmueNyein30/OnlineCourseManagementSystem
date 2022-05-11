@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author ThwetHmueNyein
@@ -14,11 +15,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonResponse extends BaseImageResponse{
-    private LocalDateTime birthDay;
+    private Date birthDay;
     private Long roleId;
     private Long universityId;
     private Long companyId;
     private Boolean status;
     private String phone;
     private String email;
+
+    public PersonResponse(Long id, String name, LocalDateTime createdAt, String imageUrl, Date birthDay, Long roleId, Long universityId, Long companyId, Boolean status, String phone, String email) {
+        super(id, name, createdAt, imageUrl);
+        this.birthDay = birthDay;
+        this.roleId = roleId;
+        this.universityId = universityId;
+        this.companyId = companyId;
+        this.status = status;
+        this.phone = phone;
+        this.email = email;
+    }
 }

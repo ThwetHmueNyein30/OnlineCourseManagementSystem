@@ -15,10 +15,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CourseResponse extends BaseImageResponse{
     private String content;
-    private String documentPath;
     private Double fee;
     private LocalDateTime registeredTo;
     private LocalDateTime registeredFrom;
     private Boolean status;
     private Long teacherId;
+
+    public CourseResponse(Long id, String name, LocalDateTime createdAt, String imageUrl, String content, Double fee, LocalDateTime registeredTo, LocalDateTime registeredFrom, Boolean status, Long teacherId) {
+        super(id, name, createdAt, imageUrl);
+        this.content = content;
+        this.fee = fee;
+        this.registeredTo = registeredTo;
+        this.registeredFrom = registeredFrom;
+        this.status = status;
+        this.teacherId = teacherId;
+    }
 }

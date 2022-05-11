@@ -9,7 +9,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import static com.thn.onlinecoursemanagement.constant.Constant.BASE_URL;
+import static com.thn.onlinecoursemanagement.util.Constant.BASE_URL;
 
 /**
  * @author ThwetHmueNyein

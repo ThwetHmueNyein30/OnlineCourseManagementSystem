@@ -18,7 +18,6 @@ import java.util.Objects;
 public class BaseResponse {
     private Boolean status;
     private Object result;
-    @CreationTimestamp
     private LocalDateTime dateTime;
     private String message;
 

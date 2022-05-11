@@ -1,20 +1,22 @@
 package com.thn.onlinecoursemanagement.ewallet_database.repositories.imp;
 
-import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletHistory;
-import com.thn.onlinecoursemanagement.ewallet_database.pools.EWalletPool;
-import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletInfo;
-import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletRepository;
 import com.thn.onlinecoursemanagement.entities.Course;
+import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletHistory;
+import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletInfo;
+import com.thn.onlinecoursemanagement.ewallet_database.pools.EWalletPool;
+import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletHistoryRepository;
+import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletRepository;
 import com.thn.onlinecoursemanagement.repositories.CourseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.sql.Types;
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static com.thn.onlinecoursemanagement.constant.Constant.*;
+import static com.thn.onlinecoursemanagement.util.Constant.EWALLET_QUERY;
+import static com.thn.onlinecoursemanagement.util.Constant.EWALLET_UPDATE_QUERY;
 
 /**
  * @author ThwetHmueNyein
@@ -31,41 +33,40 @@ public class EWalletImpl implements EWalletRepository {
     @Autowired
     CourseRepository courseRepository;
 
+    @Autowired
+    EWalletHistoryRepository eWalletHistoryRepository;
+
     public EWalletImpl() {
         this.template = new JdbcTemplate(EWalletPool.getInstance().getDataSource());
     }
 
     @Override
     public String deductBalance(Long personId,Long courseId) {
-
         try {
-            EWalletInfo info = template.queryForObject(EWALLET_QUERY, new Object[]{personId},
+            List<EWalletInfo> info = template.query(EWALLET_QUERY, new Object[]{personId},
                     (rs, rowNum) ->
                             new EWalletInfo(rs.getLong(1), rs.getLong(2),
                             rs.getTimestamp(3).toLocalDateTime(), rs.getDouble(4),
                             rs.getString(5)));
 
+            log.info("Ewallet Info : {}", info);
             Course course=courseRepository.getById(courseId);
-            if (info == null) {
-            return "No person Information";
+
+            if (info.isEmpty()){
+                return "No person Information";
             }
-            if(info.getBalance() < course.getFee()){
+
+            EWalletInfo eWalletInfo = info.get(0);
+
+            if(eWalletInfo.getBalance() < course.getFee()){
                 return "Not Enough money!";
             }
-            Double beforeBalance=info.getBalance();
-            Double afterBalance=info.getBalance()-course.getFee();
+            Double beforeBalance=eWalletInfo.getBalance();
+            Double afterBalance=eWalletInfo.getBalance()-course.getFee();
             String reason="For course registration";
-            EWalletHistory eWalletHistory=new EWalletHistory(info.getId(),beforeBalance,afterBalance,reason, LocalDateTime.now(),LocalDateTime.now());
-
-            // define query arguments
-            Object[] params = new Object[] { eWalletHistory.getWalletId(), eWalletHistory.getBeforeBalance(), eWalletHistory.getAfterBalance(),eWalletHistory.getReason(),
-                    eWalletHistory.getCreatedAt(), eWalletHistory.getUpdatedAt()
-            };
-            // define SQL types of the arguments
-            int[] types = new int[] { Types.BIGINT, Types.DOUBLE, Types.DOUBLE, Types.VARCHAR,Types.TIMESTAMP,Types.TIMESTAMP };
-
-            template.update(EWALLET_HISTORY_INSERT_QUERY,  params,types);
-            long id = template.update(EWALLET_UPDATE_QUERY, course.getFee(), info.getId());
+            EWalletHistory eWalletHistory=new EWalletHistory(eWalletInfo.getId(),beforeBalance,afterBalance,reason, LocalDateTime.now(),LocalDateTime.now());
+            eWalletHistoryRepository.insertEWalletHistory(eWalletHistory);
+            template.update(EWALLET_UPDATE_QUERY, course.getFee(), eWalletInfo.getId());
             return "Already Deducted!";
         }
         catch (Exception e){
