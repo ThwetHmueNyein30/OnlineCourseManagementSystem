@@ -4,6 +4,7 @@ import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletHistory;
 import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletHistoryRepository;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class EWalletHistoryController {
 
     @GetMapping("{id}")
     @CrossOrigin
+    @Secured({"ROLE_STUDENT"})
     BaseResponse getAllEWalletHistory(@PathVariable Long id) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());

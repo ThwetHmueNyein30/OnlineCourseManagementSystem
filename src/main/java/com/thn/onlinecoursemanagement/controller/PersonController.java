@@ -6,6 +6,7 @@ import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.payload.response.PersonResponse;
 import com.thn.onlinecoursemanagement.repositories.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +39,7 @@ public class PersonController {
 
     @PostMapping()
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse createPerson(@RequestBody Person person) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -64,6 +66,7 @@ public class PersonController {
 
     @PostMapping("/upload/{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         BaseResponse response = new BaseResponse();
         if (file.isEmpty()) {
@@ -98,6 +101,7 @@ public class PersonController {
 
     @PutMapping("{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse updatePerson(@PathVariable Long id, @RequestBody Person person) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -140,6 +144,7 @@ public class PersonController {
 
     @DeleteMapping("{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse deleteCourse(@PathVariable Long id) {
         BaseResponse response = new BaseResponse();
         try {
@@ -164,6 +169,7 @@ public class PersonController {
 
     @GetMapping()
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse getAllPerson() {
         List<PersonResponse> personResponseList = new ArrayList<>();
         BaseResponse response = new BaseResponse();

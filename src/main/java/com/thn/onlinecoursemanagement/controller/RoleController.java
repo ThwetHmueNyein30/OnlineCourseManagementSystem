@@ -4,6 +4,7 @@ import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.entities.Role;
 import com.thn.onlinecoursemanagement.repositories.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class RoleController {
 
     @GetMapping
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse getRole() {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -42,6 +44,7 @@ public class RoleController {
 
     @PostMapping()
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse createRole(@RequestBody Role role) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -66,6 +69,7 @@ public class RoleController {
 
     @PutMapping("{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse updateRole(@PathVariable Long id, @RequestBody Role role) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -97,6 +101,7 @@ public class RoleController {
 
     @DeleteMapping("{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse deleteRole(@PathVariable Long id) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());

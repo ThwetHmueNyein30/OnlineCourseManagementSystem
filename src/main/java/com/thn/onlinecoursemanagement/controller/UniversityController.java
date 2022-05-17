@@ -6,6 +6,7 @@ import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.payload.response.UniversityResponse;
 import com.thn.onlinecoursemanagement.repositories.UniversityRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +39,7 @@ public class UniversityController {
 
     @PostMapping()
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse createUniversity(@RequestBody University university) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -61,6 +63,7 @@ public class UniversityController {
 
     @PostMapping("/upload/{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -97,6 +100,7 @@ public class UniversityController {
 
     @PutMapping("{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse updateUniversity(@PathVariable Long id, @RequestBody University university) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -131,6 +135,7 @@ public class UniversityController {
 
     @DeleteMapping("{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse deleteUniversity(@PathVariable Long id) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());

@@ -6,6 +6,7 @@ import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.payload.response.CompanyResponse;
 import com.thn.onlinecoursemanagement.repositories.CompanyRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,8 +14,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.thn.onlinecoursemanagement.util.Util.encodeFileToBase64Binary;
@@ -40,6 +43,7 @@ public class CompanyController {
 
     @PostMapping()
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse registerCompany(@RequestBody Company company) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -64,6 +68,7 @@ public class CompanyController {
 
     @PostMapping("/upload/{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -74,7 +79,10 @@ public class CompanyController {
         }
         try {
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(appConfig.getUploadFolder() + file.getOriginalFilename());
+            String [] imageName= Objects.requireNonNull(file.getOriginalFilename()).split("\\.");
+
+            Path path = Paths.get(appConfig.getUploadFolder() +imageName[0] +"_"+ DateTimeFormatter.ofPattern("ddMMyyyy_hhmmss").format(LocalDateTime.now())+"."+ imageName[1]);
+            log.info("Image Path : {}", path);
             Files.write(path, bytes);
             Optional<Company> optionalCompany = companyRepository.findById(id);
             if (optionalCompany.isPresent()) {
@@ -98,6 +106,7 @@ public class CompanyController {
 
     @PutMapping("{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse updateCompany(@PathVariable Long id, @RequestBody Company company) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -140,6 +149,7 @@ public class CompanyController {
 
     @DeleteMapping("{id}")
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse deleteCompany(@PathVariable Long id) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());

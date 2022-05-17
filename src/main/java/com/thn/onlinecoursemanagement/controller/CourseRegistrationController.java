@@ -5,6 +5,7 @@ import com.thn.onlinecoursemanagement.payload.resquest.CourseRegisterRequestBody
 import com.thn.onlinecoursemanagement.services.CourseRegistrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -23,12 +24,14 @@ public class CourseRegistrationController {
 
     @PostMapping()
     @CrossOrigin
+    @Secured("ROLE_STUDENT")
     BaseResponse registerCourse(@RequestBody CourseRegisterRequestBody courseRegisterRequestBody) {
         return courseRegistrationService.validateRegistration(courseRegisterRequestBody);
     }
 
     @GetMapping()
     @CrossOrigin
+    @Secured("ROLE_STUDENT")
     BaseResponse getAllCourseRegistration() {
         return courseRegistrationService.getAllCourseRegistrationList();
     }
