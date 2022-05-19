@@ -20,7 +20,9 @@ public class CorsConfig {
         final CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         List<String> allowed = new ArrayList<>();
-        allowed.add("*");
+//        allowed.add("*");
+        allowed.add("http://localhost:4200");
+//        configuration.setAllowedOrigins(List.of("http://localhost:4200","https://you.server.domain.com"));
         configuration.setAllowedOrigins(allowed);
         configuration.setAllowedMethods(allowed);
         List<String> headers = new ArrayList<>();
