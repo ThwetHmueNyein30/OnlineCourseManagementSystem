@@ -1,7 +1,7 @@
 package com.thn.onlinecoursemanagement.services;
 
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
-import com.thn.onlinecoursemanagement.payload.resquest.CourseRegisterRequestBody;
+import com.thn.onlinecoursemanagement.payload.request.CourseRegisterRequestBody;
 
 /**
  * @author ThwetHmueNyein

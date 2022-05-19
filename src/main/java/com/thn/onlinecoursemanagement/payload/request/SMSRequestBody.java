@@ -1,4 +1,4 @@
-package com.thn.onlinecoursemanagement.payload.resquest;
+package com.thn.onlinecoursemanagement.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

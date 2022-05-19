@@ -6,22 +6,17 @@ import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.payload.response.CourseResponse;
 import com.thn.onlinecoursemanagement.repositories.CourseRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static com.thn.onlinecoursemanagement.util.Util.encodeFileToBase64Binary;
 
@@ -184,9 +179,7 @@ public class CourseController {
 
     @GetMapping()
     @CrossOrigin
-    BaseResponse getALlCourses(Principal principal) {
-        Set<String> roles = getRoles(principal);
-        log.info("Roles: {}", roles);
+    BaseResponse getALlCourses() {
         List<CourseResponse> courseResponseList = new ArrayList<>();
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -212,17 +205,6 @@ public class CourseController {
             response.setStatus(false);
         }
         return response;
-    }
-
-    public Set<String> getRoles(Principal principal) {
-        Set<String> roles;
-        try {
-            roles = ((KeycloakPrincipal) ((KeycloakAuthenticationToken) principal).getPrincipal()).getKeycloakSecurityContext().getToken().getRealmAccess().getRoles();
-        } catch (Exception ex) {
-            log.info("When trying to get roles", ex);
-            roles = null;
-        }
-        return roles;
     }
 
 }

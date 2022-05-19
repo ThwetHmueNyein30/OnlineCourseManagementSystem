@@ -2,7 +2,7 @@ package com.thn.onlinecoursemanagement.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.thn.onlinecoursemanagement.payload.resquest.SMSRequestBody;
+import com.thn.onlinecoursemanagement.payload.request.SMSRequestBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -22,7 +22,6 @@ public class SMSService {
 
     @Autowired
     RestTemplate restTemplate;
-
 
     public String createSMS(SMSRequestBody requestBody) {
         HttpHeaders headers = new HttpHeaders();

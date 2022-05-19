@@ -42,8 +42,8 @@ public class CompanyController {
 
 
     @PostMapping()
-    @CrossOrigin
     @Secured("ROLE_ADMIN")
+    @CrossOrigin
     BaseResponse registerCompany(@RequestBody Company company) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -67,8 +67,8 @@ public class CompanyController {
     }
 
     @PostMapping("/upload/{id}")
-    @CrossOrigin
     @Secured("ROLE_ADMIN")
+    @CrossOrigin
     BaseResponse uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -105,8 +105,8 @@ public class CompanyController {
     }
 
     @PutMapping("{id}")
-    @CrossOrigin
     @Secured("ROLE_ADMIN")
+    @CrossOrigin
     BaseResponse updateCompany(@PathVariable Long id, @RequestBody Company company) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -148,8 +148,8 @@ public class CompanyController {
     }
 
     @DeleteMapping("{id}")
-    @CrossOrigin
     @Secured("ROLE_ADMIN")
+    @CrossOrigin
     BaseResponse deleteCompany(@PathVariable Long id) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
