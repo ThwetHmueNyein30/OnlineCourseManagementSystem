@@ -21,7 +21,7 @@ public class CorsConfig {
         configuration.setAllowCredentials(true);
         List<String> allowed = new ArrayList<>();
         allowed.add("*");
-        configuration.setAllowedOrigins(allowed);
+        configuration.setAllowedOriginPatterns(allowed);
         configuration.setAllowedMethods(allowed);
         List<String> headers = new ArrayList<>();
         headers.add("Authorization");

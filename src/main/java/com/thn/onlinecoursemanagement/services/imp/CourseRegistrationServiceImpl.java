@@ -1,6 +1,6 @@
 package com.thn.onlinecoursemanagement.services.imp;
 
-import com.thn.onlinecoursemanagement.util.RoleEnum;
+import com.thn.onlinecoursemanagement.constants.RoleEnum;
 import com.thn.onlinecoursemanagement.entities.Course;
 import com.thn.onlinecoursemanagement.entities.CourseRegistration;
 import com.thn.onlinecoursemanagement.entities.Person;
@@ -17,21 +17,21 @@ import com.thn.onlinecoursemanagement.services.CourseRegistrationService;
 import com.thn.onlinecoursemanagement.services.SMSService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.thn.onlinecoursemanagement.util.Constant.SMS_ADDRESS;
+import static com.thn.onlinecoursemanagement.constants.Constant.SMS_ADDRESS;
 
 /**
  * @author ThwetHmueNyein
  * @Date 09/05/2022
  */
 @Slf4j
-@Service
+@Component
 public class CourseRegistrationServiceImpl implements CourseRegistrationService {
 
     @Autowired

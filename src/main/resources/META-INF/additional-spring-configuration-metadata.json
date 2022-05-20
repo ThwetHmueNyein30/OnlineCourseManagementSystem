@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "kc-auth-server-url",
+      "type": "java.lang.String",
+      "description": "Description for kc-auth-server-url."
+  }
+] }

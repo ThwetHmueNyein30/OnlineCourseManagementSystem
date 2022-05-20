@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.thn.onlinecoursemanagement.util.Constant.EWALLET_QUERY;
-import static com.thn.onlinecoursemanagement.util.Constant.EWALLET_UPDATE_QUERY;
+import static com.thn.onlinecoursemanagement.constants.Constant.EWALLET_QUERY;
+import static com.thn.onlinecoursemanagement.constants.Constant.EWALLET_UPDATE_QUERY;
 
 /**
  * @author ThwetHmueNyein

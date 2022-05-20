@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 import java.sql.Types;
 import java.util.List;
 
-import static com.thn.onlinecoursemanagement.util.Constant.EWALLET_HISTORY_INSERT_QUERY;
-import static com.thn.onlinecoursemanagement.util.Constant.EWALLET_HISTORY_QUERY;
+import static com.thn.onlinecoursemanagement.constants.Constant.EWALLET_HISTORY_INSERT_QUERY;
+import static com.thn.onlinecoursemanagement.constants.Constant.EWALLET_HISTORY_QUERY;
 
 /**
  * @author ThwetHmueNyein

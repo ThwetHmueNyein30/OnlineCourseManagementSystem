@@ -1,4 +1,4 @@
-package com.thn.onlinecoursemanagement.util;
+package com.thn.onlinecoursemanagement.constants;
 
 import java.time.LocalDateTime;
 

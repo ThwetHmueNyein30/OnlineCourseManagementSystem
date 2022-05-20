@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.thn.onlinecoursemanagement.util.Util.encodeFileToBase64Binary;
+import static com.thn.onlinecoursemanagement.constants.Util.encodeFileToBase64Binary;
 
 /**
  * @author ThwetHmueNyein

@@ -1,10 +1,12 @@
 package com.thn.onlinecoursemanagement.controller;
 
 import com.thn.onlinecoursemanagement.config.AppConfig;
+import com.thn.onlinecoursemanagement.constants.RoleEnum;
 import com.thn.onlinecoursemanagement.entities.Person;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.payload.response.PersonResponse;
 import com.thn.onlinecoursemanagement.repositories.PersonRepository;
+import com.thn.onlinecoursemanagement.services.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +16,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static com.thn.onlinecoursemanagement.util.Util.encodeFileToBase64Binary;
+import static com.thn.onlinecoursemanagement.constants.Util.encodeFileToBase64Binary;
 
 /**
  * @author ThwetHmueNyein
@@ -31,10 +33,12 @@ import static com.thn.onlinecoursemanagement.util.Util.encodeFileToBase64Binary;
 public class PersonController {
     final PersonRepository personRepository;
     final AppConfig appConfig;
+    final RoleService roleService;
 
-    public PersonController(PersonRepository personRepository, AppConfig appConfig) {
+    public PersonController(PersonRepository personRepository, AppConfig appConfig, RoleService roleService) {
         this.personRepository = personRepository;
         this.appConfig = appConfig;
+        this.roleService = roleService;
     }
 
     @PostMapping()
@@ -170,13 +174,29 @@ public class PersonController {
     @GetMapping()
     @CrossOrigin
     @Secured("ROLE_ADMIN")
-    BaseResponse getAllPerson() {
-        List<PersonResponse> personResponseList = new ArrayList<>();
-        BaseResponse response = new BaseResponse();
+    BaseResponse getAllPerson(@RequestParam(value = "role") String role) {
+        if (role == null) role = RoleEnum.ALL.getCode();
+
+        if (!RoleEnum.isValidRole(role)){
+            log.info("Invalid role {}", role);
+            return new BaseResponse(false, null, LocalDateTime.now(), "Invalid role");
+        }
+
+        List<Person> personList;
+        if (role.equals(RoleEnum.ALL.getCode())) {
+            personList = personRepository.findAll();
+        } else {
+            personList = roleService.findAllByRole(role);
+        }
+
+        List<PersonResponse> personResponseList = personList.stream().map(this::convertFromPerson).collect(Collectors.toList());
+        return new BaseResponse(true, personResponseList, LocalDateTime.now(), "Successfully");
+
+        /*BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
         try {
             response.setStatus(true);
-            for (Person person : personRepository.findAll()) {
+            for (Person person : personList) {
                 PersonResponse personResponse = new PersonResponse(
                         person.getId(),
                         person.getName(),
@@ -195,7 +215,17 @@ public class PersonController {
             response.setMessage("Failure");
             response.setStatus(false);
         }
-        return response;
+        return response;*/
+    }
+
+    PersonResponse convertFromPerson(Person person){
+        return new PersonResponse(person.getId(),
+                person.getName(),
+                person.getCreatedAt(),
+                person.getImageUrl() == null ? null : encodeFileToBase64Binary(person.getImageUrl()),
+                person.getBirthDay(),
+                person.getRoleId(), person.getUniversityId(),
+                person.getCompanyId(), person.getStatus(), person.getPhone(), person.getEmail());
     }
 
 }
