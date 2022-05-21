@@ -178,7 +178,6 @@ public class PersonController {
     BaseResponse getAllPerson(@RequestParam(value = "role", required = false) String role) {
         String roleUpperCase=role.toUpperCase(Locale.ROOT);
         log.info("Role : {} ", role);
-        if (roleUpperCase == null) role = RoleEnum.ALL.getCode();
 
         if (!RoleEnum.isValidRole(roleUpperCase)){
             log.info("Invalid role {}", roleUpperCase);
@@ -208,7 +207,11 @@ public class PersonController {
                 person.getImageUrl() == null ? null : encodeFileToBase64Binary(person.getImageUrl()),
                 person.getBirthDay(),
                 person.getRoleId(), person.getUniversityId(),
-                person.getCompanyId(), person.getStatus(), person.getPhone(), person.getEmail());
+                person.getCompanyId(),
+                person.getStatus(),
+                person.getPhone(),
+                person.getEmail(),
+                person.getAddress());
     }
 
 }

@@ -22,8 +22,9 @@ public class PersonResponse extends BaseImageResponse{
     private Boolean status;
     private String phone;
     private String email;
+    private String address;
 
-    public PersonResponse(Long id, String name, LocalDateTime createdAt, String imageUrl, Date birthDay, Long roleId, Long universityId, Long companyId, Boolean status, String phone, String email) {
+    public PersonResponse(Long id, String name, LocalDateTime createdAt, String imageUrl, Date birthDay, Long roleId, Long universityId, Long companyId, Boolean status, String phone, String email, String address) {
         super(id, name, createdAt, imageUrl);
         this.birthDay = birthDay;
         this.roleId = roleId;
@@ -32,5 +33,6 @@ public class PersonResponse extends BaseImageResponse{
         this.status = status;
         this.phone = phone;
         this.email = email;
+        this.address = address;
     }
 }
