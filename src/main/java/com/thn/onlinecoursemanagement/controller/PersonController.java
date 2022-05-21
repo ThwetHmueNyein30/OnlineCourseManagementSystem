@@ -128,6 +128,7 @@ public class PersonController {
                 p.setStatus(person.getStatus());
                 p.setImageUrl(person.getImageUrl());
                 person.setPhone(person.getPhone());
+                p.setCreatedAt(p.getCreatedAt());
                 personRepository.save(p);
                 response.setResult(p);
                 response.setStatus(true);

@@ -132,6 +132,7 @@ public class CourseController {
                 c.setStatus(course.getStatus());
                 c.setTeacherId(course.getTeacherId());
                 c.setImageUrl(course.getImageUrl());
+                c.setCreatedAt(c.getCreatedAt());
                 courseRepository.save(c);
                 response.setResult(c);
                 response.setStatus(true);

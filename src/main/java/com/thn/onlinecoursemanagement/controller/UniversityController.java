@@ -115,8 +115,8 @@ public class UniversityController {
                 University u = optionalUniversity.get();
                 u.setName(university.getName());
                 u.setAddress(university.getAddress());
-                u.setCreatedAt(university.getCreatedAt());
                 u.setImageUrl(university.getImageUrl());
+                u.setCreatedAt(u.getCreatedAt());
                 universityRepository.save(u);
                 response.setResult(u);
                 response.setStatus(true);

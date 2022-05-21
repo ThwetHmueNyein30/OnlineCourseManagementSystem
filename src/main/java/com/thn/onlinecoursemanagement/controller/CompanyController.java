@@ -44,7 +44,7 @@ public class CompanyController {
     @PostMapping()
     @Secured("ROLE_ADMIN")
     @CrossOrigin
-    BaseResponse registerCompany(@RequestBody Company company) {
+    BaseResponse createCompany(@RequestBody Company company) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
         if (company == null) {
@@ -127,6 +127,7 @@ public class CompanyController {
                 c.setName(company.getName());
                 c.setAddress(company.getAddress());
                 c.setImageUrl(company.getImageUrl());
+                c.setCreatedAt(c.getCreatedAt());
                 companyRepository.save(c);
                 response.setResult(c);
                 response.setStatus(true);
