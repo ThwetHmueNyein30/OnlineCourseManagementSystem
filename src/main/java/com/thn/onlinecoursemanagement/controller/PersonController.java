@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -175,22 +176,23 @@ public class PersonController {
     @CrossOrigin
     @Secured("ROLE_ADMIN")
     BaseResponse getAllPerson(@RequestParam(value = "role", required = false) String role) {
+        String roleUpperCase=role.toUpperCase(Locale.ROOT);
         log.info("Role : {} ", role);
-        if (role == null) role = RoleEnum.ALL.getCode();
+        if (roleUpperCase == null) role = RoleEnum.ALL.getCode();
 
-        if (!RoleEnum.isValidRole(role)){
-            log.info("Invalid role {}", role);
+        if (!RoleEnum.isValidRole(roleUpperCase)){
+            log.info("Invalid role {}", roleUpperCase);
             return new BaseResponse(false, null, LocalDateTime.now(), "Invalid role");
         }
 
         List<Person> personList;
-        if (role.equals(RoleEnum.ALL.getCode())) {
+        if (roleUpperCase.equals(RoleEnum.ALL.getCode())) {
 
             personList = personRepository.findAll();
             log.info("Role All: {} ", personList);
 
         } else {
-            personList = roleService.findAllByRole(role);
+            personList = roleService.findAllByRole(roleUpperCase);
             log.info("Specific Role: {} ", personList);
 
         }
