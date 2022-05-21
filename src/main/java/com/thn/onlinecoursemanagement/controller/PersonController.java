@@ -174,7 +174,8 @@ public class PersonController {
     @GetMapping()
     @CrossOrigin
     @Secured("ROLE_ADMIN")
-    BaseResponse getAllPerson(@RequestParam(value = "role") String role) {
+    BaseResponse getAllPerson(@RequestParam(value = "role", required = false) String role) {
+        log.info("Role : {} ", role);
         if (role == null) role = RoleEnum.ALL.getCode();
 
         if (!RoleEnum.isValidRole(role)){
@@ -184,38 +185,18 @@ public class PersonController {
 
         List<Person> personList;
         if (role.equals(RoleEnum.ALL.getCode())) {
+
             personList = personRepository.findAll();
+            log.info("Role All: {} ", personList);
+
         } else {
             personList = roleService.findAllByRole(role);
+            log.info("Specific Role: {} ", personList);
+
         }
 
         List<PersonResponse> personResponseList = personList.stream().map(this::convertFromPerson).collect(Collectors.toList());
         return new BaseResponse(true, personResponseList, LocalDateTime.now(), "Successfully");
-
-        /*BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
-        try {
-            response.setStatus(true);
-            for (Person person : personList) {
-                PersonResponse personResponse = new PersonResponse(
-                        person.getId(),
-                        person.getName(),
-                        person.getCreatedAt(),
-                        person.getImageUrl() == null ? null : encodeFileToBase64Binary(person.getImageUrl()),
-                        person.getBirthDay(),
-                        person.getRoleId(), person.getUniversityId(),
-                        person.getCompanyId(), person.getStatus(), person.getPhone(), person.getEmail()
-                );
-                personResponseList.add(personResponse);
-            }
-            response.setResult(personResponseList);
-            response.setMessage("Success");
-        } catch (Exception e) {
-            log.info("Exception : ", e);
-            response.setMessage("Failure");
-            response.setStatus(false);
-        }
-        return response;*/
     }
 
     PersonResponse convertFromPerson(Person person){
