@@ -121,7 +121,6 @@ public class PersonController {
                 Person p = optionalPerson.get();
                 p.setName(person.getName());
                 p.setAddress(person.getAddress());
-                p.setCreatedAt(person.getCreatedAt());
                 p.setBirthDay(person.getBirthDay());
                 p.setRoleId(person.getRoleId());
                 p.setUniversityId(person.getUniversityId());

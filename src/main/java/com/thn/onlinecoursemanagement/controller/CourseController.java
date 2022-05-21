@@ -127,7 +127,6 @@ public class CourseController {
                 c.setName(course.getName());
                 c.setContent(course.getContent());
                 c.setFee(course.getFee());
-                c.setCreatedAt(course.getCreatedAt());
                 c.setRegisteredTo(course.getRegisteredTo());
                 c.setRegisteredFrom(course.getRegisteredFrom());
                 c.setStatus(course.getStatus());

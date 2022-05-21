@@ -126,7 +126,6 @@ public class CompanyController {
                 Company c = optionalCompany.get();
                 c.setName(company.getName());
                 c.setAddress(company.getAddress());
-                c.setCreatedAt(company.getCreatedAt());
                 c.setImageUrl(company.getImageUrl());
                 companyRepository.save(c);
                 response.setResult(c);
