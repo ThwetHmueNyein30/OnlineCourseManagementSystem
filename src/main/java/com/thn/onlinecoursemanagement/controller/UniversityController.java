@@ -1,6 +1,7 @@
 package com.thn.onlinecoursemanagement.controller;
 
 import com.thn.onlinecoursemanagement.config.AppConfig;
+import com.thn.onlinecoursemanagement.constants.Util;
 import com.thn.onlinecoursemanagement.entities.University;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.payload.response.UniversityResponse;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.thn.onlinecoursemanagement.constants.Util.encodeFileToBase64Binary;
 
 /**
  * @author ThwetHmueNyein
@@ -31,10 +31,12 @@ import static com.thn.onlinecoursemanagement.constants.Util.encodeFileToBase64Bi
 public class UniversityController {
     final UniversityRepository universityRepository;
     final AppConfig appConfig;
+    final Util util;
 
-    public UniversityController(UniversityRepository universityRepository, AppConfig appConfig) {
+    public UniversityController(UniversityRepository universityRepository, AppConfig appConfig, Util util) {
         this.universityRepository = universityRepository;
         this.appConfig = appConfig;
+        this.util = util;
     }
 
     @PostMapping()
@@ -173,7 +175,7 @@ public class UniversityController {
                         university.getId(),
                         university.getName(),
                         university.getCreatedAt(),
-                        university.getImageUrl() == null ? null : encodeFileToBase64Binary(university.getImageUrl()),
+                        university.getImageUrl() == null ? null : util.encodeFileToBase64Binary(university.getImageUrl()),
                         university.getAddress()
                 );
                 universityResponseList.add(universityResponse);

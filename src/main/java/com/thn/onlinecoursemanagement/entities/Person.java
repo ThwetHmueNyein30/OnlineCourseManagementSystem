@@ -36,8 +36,9 @@ public class Person {
     private String imageUrl;
     private String phone;
     private String email;
+    private String keycloakId;
 
-    public Person(String name, String address, LocalDateTime createdAt, Date birthDay, Long roleId, Long universityId, Long companyId, Boolean status, String imageUrl, String phone, String email) {
+    public Person(String name, String address, LocalDateTime createdAt, Date birthDay, Long roleId, Long universityId, Long companyId, Boolean status, String imageUrl, String phone, String email, String keycloakId) {
         this.name = name;
         this.address = address;
         this.createdAt = createdAt;
@@ -49,5 +50,6 @@ public class Person {
         this.imageUrl = imageUrl;
         this.phone = phone;
         this.email = email;
+        this.keycloakId = keycloakId;
     }
 }

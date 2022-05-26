@@ -23,5 +23,8 @@ public class EWalletHistoryMapper implements RowMapper<EWalletHistory> {
                 rs.getTimestamp(7).toLocalDateTime());
         return eWalletHistory;
     }
+
+
+
 }
 

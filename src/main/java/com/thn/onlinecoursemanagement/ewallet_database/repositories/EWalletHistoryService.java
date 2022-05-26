@@ -1,7 +1,6 @@
 package com.thn.onlinecoursemanagement.ewallet_database.repositories;
 
 import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletHistory;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -10,7 +9,7 @@ import java.util.List;
  * @Date 09/05/2022
  */
 
-public interface EWalletHistoryRepository {
+public interface EWalletHistoryService {
 
     List<EWalletHistory> getAllEWalletHistory(Long id);
     void insertEWalletHistory(EWalletHistory eWalletHistory);

@@ -1,7 +1,6 @@
 package com.thn.onlinecoursemanagement.controller;
 
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
-import com.thn.onlinecoursemanagement.payload.request.CourseRegisterRequestBody;
 import com.thn.onlinecoursemanagement.services.CourseRegistrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +21,19 @@ public class CourseRegistrationController {
     @Autowired
     CourseRegistrationService courseRegistrationService;
 
-    @PostMapping()
+    @PutMapping("{courseId}")
     @CrossOrigin
-    @Secured("ROLE_STUDENT")
-    BaseResponse registerCourse(@RequestBody CourseRegisterRequestBody courseRegisterRequestBody) {
-        return courseRegistrationService.validateRegistration(courseRegisterRequestBody);
+    @Secured({"ROLE_STUDENT"})
+    BaseResponse registerCourse(@PathVariable Long courseId) {
+        return courseRegistrationService.validateRegistration(courseId);
     }
 
     @GetMapping()
     @CrossOrigin
-    @Secured("ROLE_STUDENT")
+    @Secured({"ROLE_STUDENT","ROLE_ADMIN"})
     BaseResponse getAllCourseRegistration() {
         return courseRegistrationService.getAllCourseRegistrationList();
     }
+
 
 }

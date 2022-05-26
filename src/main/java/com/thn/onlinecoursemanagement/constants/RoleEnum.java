@@ -12,7 +12,7 @@ import java.util.Locale;
 public enum RoleEnum {
         STUDENT_ROLE("STUDENT"),
         TEACHER_ROLE("TEACHER"),
-        ALL("ALL");
+        ADMIN("ADMIN");
 
         private String code;
 
@@ -29,7 +29,7 @@ public enum RoleEnum {
         }
 
         public static boolean isValidRole(String role) {
-                List<String> roleEnumList = new ArrayList<String>(Arrays.asList(STUDENT_ROLE.getCode(), TEACHER_ROLE.getCode(), ALL.getCode()));
+                List<String> roleEnumList = new ArrayList<String>(Arrays.asList(STUDENT_ROLE.getCode(), TEACHER_ROLE.getCode(), ADMIN.getCode()));
                 return roleEnumList.contains(role.toUpperCase(Locale.ROOT));
         }
 }

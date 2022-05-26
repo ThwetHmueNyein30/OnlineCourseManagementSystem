@@ -1,6 +1,7 @@
 package com.thn.onlinecoursemanagement.controller;
 
 import com.thn.onlinecoursemanagement.config.AppConfig;
+import com.thn.onlinecoursemanagement.constants.Util;
 import com.thn.onlinecoursemanagement.entities.Company;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.payload.response.CompanyResponse;
@@ -20,8 +21,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.thn.onlinecoursemanagement.constants.Util.encodeFileToBase64Binary;
-
 
 /**
  * @author ThwetHmueNyein
@@ -34,10 +33,12 @@ import static com.thn.onlinecoursemanagement.constants.Util.encodeFileToBase64Bi
 public class CompanyController {
     final CompanyRepository companyRepository;
     final AppConfig appConfig;
+    final Util util;
 
-    public CompanyController(CompanyRepository companyRepository, AppConfig appConfig) {
+    public CompanyController(CompanyRepository companyRepository, AppConfig appConfig, Util util) {
         this.companyRepository = companyRepository;
         this.appConfig = appConfig;
+        this.util = util;
     }
 
 
@@ -132,18 +133,20 @@ public class CompanyController {
                 response.setResult(c);
                 response.setStatus(true);
                 response.setMessage("Successfully Updated");
+                return response;
             } else {
                 response.setStatus(false);
                 response.setMessage("Fail to update");
+                return response;
             }
 
         } catch (Exception e) {
             response.setStatus(false);
             response.setMessage("Fail to update");
             log.info("Exception : ", e);
+            return response;
 
         }
-        return response;
 
     }
 
@@ -184,7 +187,7 @@ public class CompanyController {
             for (Company company : companyRepository.findAll()) {
 
                 CompanyResponse companyResponse = new CompanyResponse(company.getId(), company.getName(), company.getCreatedAt(),
-                        company.getImageUrl() == null ? null : encodeFileToBase64Binary(company.getImageUrl()), company.getAddress());
+                        company.getImageUrl() == null ? null : util.encodeFileToBase64Binary(company.getImageUrl()), company.getAddress());
                 companyList.add(companyResponse);
             }
             response.setResult(companyList);

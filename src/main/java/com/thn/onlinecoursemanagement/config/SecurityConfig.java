@@ -1,5 +1,6 @@
 package com.thn.onlinecoursemanagement.config;
 
+import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -32,7 +33,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         auth.authenticationProvider(keycloakAuthenticationProvider);
     }
 
-
     @Bean
     @Override
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
@@ -52,6 +52,11 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .anyRequest()
                 .permitAll();
+    }
+
+    @Bean
+    public KeycloakSecurityContext KeyCloakSecurityContext (){
+        return new KeycloakSecurityContext();
     }
 
 }

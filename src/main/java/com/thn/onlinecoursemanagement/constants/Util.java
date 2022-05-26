@@ -1,32 +1,23 @@
 package com.thn.onlinecoursemanagement.constants;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.codec.binary.Base64;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
- * @author ThwetHmueNyein
- * @Date 09/05/2022
+ * Created by Tungct in 12/10/2020
  */
-@Slf4j
-public class Util {
-
-     public static String encodeFileToBase64Binary(String imgUrl) {
-        try {
-            File file = new File(imgUrl);
-            FileInputStream fileInputStreamReader = new FileInputStream(file);
-            byte[] bytes = new byte[(int) file.length()];
-            fileInputStreamReader.read(bytes);
-            log.info("Encoded String: {} ", new String(Base64.encodeBase64(bytes), StandardCharsets.UTF_8));
-            return new String(Base64.encodeBase64(bytes), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            log.info("Exception : ", e);
-        }
-        return null;
-    }
-
+public interface Util {
+    String normalizeIsdn(String isdn);
+    String toIsdn(String number);
+    String toMsisdn(String number);
+    boolean isMytelNumber(String number);
+    String localDateTimeToString(LocalDateTime dateTime);
+    LocalDateTime stringToLocalDateTime (String timeString);
+    LocalDateTime longToLocalDateTime (long timeLong);
+    CharSequence standardizeDateString(String dateString);
+    String toJson(Object object);
+    String localdateToPartition(LocalDate localDate);
+    <T> T toObject(String json, Class t);
+    String encodeFileToBase64Binary(String imgUrl);
 
 }

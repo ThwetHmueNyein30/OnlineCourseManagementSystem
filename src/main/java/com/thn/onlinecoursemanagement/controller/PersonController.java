@@ -2,12 +2,18 @@ package com.thn.onlinecoursemanagement.controller;
 
 import com.thn.onlinecoursemanagement.config.AppConfig;
 import com.thn.onlinecoursemanagement.constants.RoleEnum;
+import com.thn.onlinecoursemanagement.constants.Util;
 import com.thn.onlinecoursemanagement.entities.Person;
+import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletInfo;
+import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletInfoService;
+import com.thn.onlinecoursemanagement.payload.request.PersonEWalletRequestBody;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.payload.response.PersonResponse;
 import com.thn.onlinecoursemanagement.repositories.PersonRepository;
+import com.thn.onlinecoursemanagement.services.KeycloakService;
 import com.thn.onlinecoursemanagement.services.RoleService;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +27,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.thn.onlinecoursemanagement.constants.Util.encodeFileToBase64Binary;
 
 /**
  * @author ThwetHmueNyein
@@ -35,31 +40,48 @@ public class PersonController {
     final PersonRepository personRepository;
     final AppConfig appConfig;
     final RoleService roleService;
+    final EWalletInfoService eWalletInfoService;
+    final KeycloakService keycloakService;
+    final Util util;
 
-    public PersonController(PersonRepository personRepository, AppConfig appConfig, RoleService roleService) {
+    public PersonController(PersonRepository personRepository, AppConfig appConfig, RoleService roleService, EWalletInfoService eWalletInfoService, KeycloakService keycloakService, Util util) {
         this.personRepository = personRepository;
         this.appConfig = appConfig;
         this.roleService = roleService;
+        this.eWalletInfoService = eWalletInfoService;
+        this.keycloakService = keycloakService;
+        this.util = util;
     }
 
     @PostMapping()
     @CrossOrigin
     @Secured("ROLE_ADMIN")
-    BaseResponse createPerson(@RequestBody Person person) {
+    BaseResponse createPerson(@RequestBody PersonEWalletRequestBody requestBody) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
-        if (person == null) {
+        if (requestBody == null) {
             response.setStatus(false);
             response.setMessage("No Person Data");
             return response;
         }
+        Person person=requestBody.getPerson();
+        Double balance=requestBody.getBalance();
+
         try {
-            person = personRepository.save(new Person(person.getName(), person.getAddress(), LocalDateTime.now(),
-                    person.getBirthDay(), person.getRoleId(),
-                    person.getUniversityId(), person.getCompanyId(), person.getStatus(), null, person.getPhone(), person.getEmail()));
-            response.setResult(person);
-            response.setStatus(true);
-            response.setMessage("Success");
+            UserRepresentation user = keycloakService.createUser(person);
+            if (user != null) {
+                person = personRepository.save(new Person(person.getName(), person.getAddress(), LocalDateTime.now(),
+                        person.getBirthDay(), person.getRoleId(),
+                        person.getUniversityId(), person.getCompanyId(), person.getStatus(), null, person.getPhone(), person.getEmail(), user.getId()));
+                EWalletInfo eWalletInfo=new EWalletInfo(person.getId(),LocalDateTime.now(),balance,person.getName());
+                eWalletInfoService.insertEWalletIfo(eWalletInfo);
+                response.setResult(person);
+                response.setStatus(true);
+                response.setMessage("Success");
+            } else {
+                response.setStatus(false);
+                response.setMessage("Fail to create User in Keycloak");
+            }
         } catch (Exception e) {
             response.setStatus(false);
             response.setMessage("Failure");
@@ -127,8 +149,9 @@ public class PersonController {
                 p.setCompanyId(person.getCompanyId());
                 p.setStatus(person.getStatus());
                 p.setImageUrl(person.getImageUrl());
-                person.setPhone(person.getPhone());
+                p.setPhone(person.getPhone());
                 p.setCreatedAt(p.getCreatedAt());
+                p.setEmail(person.getEmail());
                 personRepository.save(p);
                 response.setResult(p);
                 response.setStatus(true);
@@ -176,42 +199,44 @@ public class PersonController {
     @CrossOrigin
     @Secured("ROLE_ADMIN")
     BaseResponse getAllPerson(@RequestParam(value = "role", required = false) String role) {
-        String roleUpperCase=role.toUpperCase(Locale.ROOT);
-        log.info("Role : {} ", role);
-
-        if (!RoleEnum.isValidRole(roleUpperCase)){
-            log.info("Invalid role {}", roleUpperCase);
+        String roleUpperCase = role.toUpperCase(Locale.ROOT);
+        List<Person> personList;
+        if (!RoleEnum.isValidRole(roleUpperCase)) {
             return new BaseResponse(false, null, LocalDateTime.now(), "Invalid role");
         }
-
-        List<Person> personList;
-        if (roleUpperCase.equals(RoleEnum.ALL.getCode())) {
-
+        if (roleUpperCase.equals(RoleEnum.ADMIN.getCode())) {
             personList = personRepository.findAll();
-            log.info("Role All: {} ", personList);
-
         } else {
             personList = roleService.findAllByRole(roleUpperCase);
-            log.info("Specific Role: {} ", personList);
-
         }
-
         List<PersonResponse> personResponseList = personList.stream().map(this::convertFromPerson).collect(Collectors.toList());
+
         return new BaseResponse(true, personResponseList, LocalDateTime.now(), "Successfully");
     }
 
-    PersonResponse convertFromPerson(Person person){
+    @GetMapping("/getByName")
+    @CrossOrigin
+    BaseResponse getPersonByName(@RequestParam(value = "username") String username) {
+        Person person = personRepository.findByName(username);
+        PersonResponse personResponse=convertFromPerson(person);
+//        List<PersonResponse> personResponseList = personList.stream().map(this::convertFromPerson).collect(Collectors.toList());
+        return new BaseResponse(true, personResponse, LocalDateTime.now(), "Successfully");
+    }
+
+    PersonResponse convertFromPerson(Person person) {
         return new PersonResponse(person.getId(),
                 person.getName(),
                 person.getCreatedAt(),
-                person.getImageUrl() == null ? null : encodeFileToBase64Binary(person.getImageUrl()),
+                person.getImageUrl() == null ? null : util.encodeFileToBase64Binary(person.getImageUrl()),
                 person.getBirthDay(),
                 person.getRoleId(), person.getUniversityId(),
                 person.getCompanyId(),
                 person.getStatus(),
                 person.getPhone(),
                 person.getEmail(),
-                person.getAddress());
+                person.getAddress(),
+                person.getKeycloakId());
+
     }
 
 }

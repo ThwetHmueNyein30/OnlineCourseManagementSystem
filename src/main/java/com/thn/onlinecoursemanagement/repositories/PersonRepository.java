@@ -17,4 +17,7 @@ public interface PersonRepository extends JpaRepository<Person,Long> {
     @Query(value = "select p.* from person p, role r where p.role_id = r.role_id and upper(r.name) = ?1 ", nativeQuery = true)
     List<Person> findAllByRole(String role);
 
+    Person findByName(String name);
+    Person findByKeycloakId(String keycloakId);
+
 }

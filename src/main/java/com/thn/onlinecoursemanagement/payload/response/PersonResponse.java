@@ -23,8 +23,9 @@ public class PersonResponse extends BaseImageResponse{
     private String phone;
     private String email;
     private String address;
+    private String keycloakId;
 
-    public PersonResponse(Long id, String name, LocalDateTime createdAt, String imageUrl, Date birthDay, Long roleId, Long universityId, Long companyId, Boolean status, String phone, String email, String address) {
+    public PersonResponse(Long id, String name, LocalDateTime createdAt, String imageUrl, Date birthDay, Long roleId, Long universityId, Long companyId, Boolean status, String phone, String email, String address,String keycloakId) {
         super(id, name, createdAt, imageUrl);
         this.birthDay = birthDay;
         this.roleId = roleId;
@@ -34,5 +35,6 @@ public class PersonResponse extends BaseImageResponse{
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.keycloakId=keycloakId;
     }
 }

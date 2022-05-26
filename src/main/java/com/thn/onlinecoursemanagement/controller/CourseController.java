@@ -1,12 +1,16 @@
 package com.thn.onlinecoursemanagement.controller;
 
 import com.thn.onlinecoursemanagement.config.AppConfig;
+import com.thn.onlinecoursemanagement.constants.Util;
 import com.thn.onlinecoursemanagement.entities.Course;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import com.thn.onlinecoursemanagement.payload.response.CourseResponse;
 import com.thn.onlinecoursemanagement.repositories.CourseRepository;
+import com.thn.onlinecoursemanagement.services.KeycloakService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.thn.onlinecoursemanagement.constants.Util.encodeFileToBase64Binary;
 
 /**
  * @author ThwetHmueNyein
@@ -31,11 +34,12 @@ import static com.thn.onlinecoursemanagement.constants.Util.encodeFileToBase64Bi
 public class CourseController {
     final CourseRepository courseRepository;
     final AppConfig appConfig;
+    final Util util;
 
-
-    public CourseController(CourseRepository courseRepository, AppConfig appConfig) {
+    public CourseController(CourseRepository courseRepository, AppConfig appConfig, Util util) {
         this.courseRepository = courseRepository;
         this.appConfig = appConfig;
+        this.util = util;
     }
 
     @PostMapping()
@@ -179,7 +183,11 @@ public class CourseController {
 
     @GetMapping()
     @CrossOrigin
+    @Secured({"ROLE_TEACHER","ROLE_ADMIN","ROLE_STUDENT"})
     BaseResponse getALlCourses() {
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        authentication.getAuthorities().forEach(a->log.info(String.valueOf(a)));
+
         List<CourseResponse> courseResponseList = new ArrayList<>();
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -188,7 +196,7 @@ public class CourseController {
             for (Course course : courseRepository.findAll()) {
                 CourseResponse courseResponse=new CourseResponse(course.getId(),course.getName(),
                         course.getCreatedAt(),
-                        course.getImageUrl() == null ? null :encodeFileToBase64Binary(course.getImageUrl()),
+                        course.getImageUrl() == null ? null : util.encodeFileToBase64Binary(course.getImageUrl()),
                         course.getContent(),
                         course.getFee(),
                         course.getRegisteredTo(),

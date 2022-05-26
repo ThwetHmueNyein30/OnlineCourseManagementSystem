@@ -1,7 +1,7 @@
 package com.thn.onlinecoursemanagement.controller;
 
 import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletHistory;
-import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletHistoryRepository;
+import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletHistoryService;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.annotation.Secured;
@@ -19,10 +19,10 @@ import java.time.LocalDateTime;
 @RequestMapping("ewallet-history")
 public class EWalletHistoryController {
 
-    private final EWalletHistoryRepository eWalletHistoryRepository;
+    private final EWalletHistoryService eWalletHistoryService;
 
-    public EWalletHistoryController(EWalletHistoryRepository eWalletHistoryRepository) {
-        this.eWalletHistoryRepository = eWalletHistoryRepository;
+    public EWalletHistoryController(EWalletHistoryService eWalletHistoryService) {
+        this.eWalletHistoryService = eWalletHistoryService;
     }
 
     @GetMapping("{id}")
@@ -33,7 +33,7 @@ public class EWalletHistoryController {
         response.setDateTime(LocalDateTime.now());
         try {
             response.setStatus(true);
-            response.setResult(eWalletHistoryRepository.getAllEWalletHistory(id));
+            response.setResult(eWalletHistoryService.getAllEWalletHistory(id));
             response.setMessage("Success");
             return response;
         } catch (Exception e) {
@@ -46,6 +46,7 @@ public class EWalletHistoryController {
 
     @PostMapping
     @CrossOrigin
+    @Secured({"ROLE_ADMIN"})
     BaseResponse createEWalletHistory(@RequestBody EWalletHistory eWalletHistory) {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
@@ -55,7 +56,7 @@ public class EWalletHistoryController {
             return response;
         }
         try {
-            eWalletHistoryRepository.insertEWalletHistory(eWalletHistory);
+            eWalletHistoryService.insertEWalletHistory(eWalletHistory);
             response.setResult(eWalletHistory);
             response.setStatus(true);
             response.setMessage("Successfully upload!");

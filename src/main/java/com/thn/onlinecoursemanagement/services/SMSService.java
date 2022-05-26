@@ -29,6 +29,7 @@ public class SMSService {
         HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
         ResponseEntity<String> stringResponseEntity;
 
+        log.info("URL: {}", BASE_URL);
         log.info("request: {}", logMessage(entity));
         try {
             stringResponseEntity = restTemplate.exchange(BASE_URL, HttpMethod.POST, entity, String.class);
@@ -36,7 +37,7 @@ public class SMSService {
             log.info("Call api fail: ", e);
             return "failed";
         }
-        log.info("response: {}", logMessage(stringResponseEntity));
+        log.info("response: {}", logMessage(stringResponseEntity.getBody()));
 
         return stringResponseEntity.getBody();
 

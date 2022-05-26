@@ -10,7 +10,10 @@ import com.thn.onlinecoursemanagement.payload.request.CourseRegisterRequestBody;
 
 public interface CourseRegistrationService {
 
-    BaseResponse validateRegistration(CourseRegisterRequestBody courseRegisterRequestBody);
+    BaseResponse validateRegistration(Long courseId);
 
     BaseResponse getAllCourseRegistrationList();
+
+    BaseResponse getRegisteredCourseByPerson(Long personId);
+
 }

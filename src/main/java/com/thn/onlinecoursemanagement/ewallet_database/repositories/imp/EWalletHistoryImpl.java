@@ -3,7 +3,7 @@ package com.thn.onlinecoursemanagement.ewallet_database.repositories.imp;
 import com.thn.onlinecoursemanagement.ewallet_database.mapper.EWalletHistoryMapper;
 import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletHistory;
 import com.thn.onlinecoursemanagement.ewallet_database.pools.EWalletPool;
-import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletHistoryRepository;
+import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ import static com.thn.onlinecoursemanagement.constants.Constant.EWALLET_HISTORY_
 //
 
 @Component
-public class EWalletHistoryImpl implements EWalletHistoryRepository {
+public class EWalletHistoryImpl implements EWalletHistoryService {
 
     @Autowired
     private final JdbcTemplate template;
