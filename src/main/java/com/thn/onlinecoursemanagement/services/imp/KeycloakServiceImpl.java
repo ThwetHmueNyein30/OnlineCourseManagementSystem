@@ -73,7 +73,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 
         try {
             Response response = usersResource.create(kcUser);
-            log.info("Response in keycloak creation : {}", response);
+//            log.info("Response in keycloak creation : {}", util.toJson(response));
             log.info("Response Status : {}", response.getStatus());
             if (response.getStatus() == 201) {
                 List<UserRepresentation> search= keycloak.realm(getRealm()).users().search(kcUser.getUsername());

@@ -8,6 +8,7 @@ import com.thn.onlinecoursemanagement.ewallet_database.services.EWalletHistorySe
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class EWalletHistoryImpl implements EWalletHistoryService {
     @Override
     public void insertEWalletHistory(EWalletHistory eWalletHistory) {
         Object[] params = new Object[] { eWalletHistory.getWalletId(), eWalletHistory.getBeforeBalance(), eWalletHistory.getAfterBalance(),eWalletHistory.getReason(),
-                eWalletHistory.getCreatedAt(), eWalletHistory.getUpdatedAt()
+                Timestamp.valueOf(eWalletHistory.getCreatedAt()), Timestamp.valueOf(eWalletHistory.getUpdatedAt())
         };
         int[] types = new int[] { Types.BIGINT, Types.DOUBLE, Types.DOUBLE, Types.VARCHAR,Types.TIMESTAMP,Types.TIMESTAMP };
         template.update(appConfig.getEWallet().getHistoryInsert(),  params,types);

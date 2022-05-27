@@ -60,7 +60,7 @@ public class PersonServiceImpl implements PersonService {
         Double balance=requestBody.getBalance();
         try {
             UserRepresentation user = keycloakService.createUser(person);
-            log.info("User : {} ", user);
+            log.info("User : {} ", util.toJson(user));
             if (user != null) {
                 person = personRepository.save(new Person(person.getName(), person.getAddress(), LocalDateTime.now(),
                         person.getBirthDay(), person.getRoleId(),
@@ -124,6 +124,7 @@ public class PersonServiceImpl implements PersonService {
                 return new BaseResponse(false,null,LocalDateTime.now(),"Fail to upload");
             }
         } catch (Exception e) {
+            log.error("Exception when upload file: ", e);
             return new BaseResponse(false,null,LocalDateTime.now(),"Fail to upload");
         }
     }
@@ -178,7 +179,7 @@ public class PersonServiceImpl implements PersonService {
         if (role.equals(RoleEnum.ADMIN.getCode())) {
             personList.addAll (personRepository.findAll());
         } else {
-            personList.addAll (roleService.findAllByRole(role));
+            personList.addAll (roleService.findAllByRole(roleUpperCase));
         }
         List<PersonResponse> personResponseList = personList.stream().map(this::convertFromPerson).collect(Collectors.toList());
         return new BaseResponse(true, personResponseList, LocalDateTime.now(), "Successfully");
