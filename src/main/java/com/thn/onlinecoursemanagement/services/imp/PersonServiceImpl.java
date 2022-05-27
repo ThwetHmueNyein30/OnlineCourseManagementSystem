@@ -100,6 +100,8 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public BaseResponse uploadImage(Long id, MultipartFile file) {
+        log.info("Response : {} ", file);
+
         if (file.isEmpty()) {
             return new BaseResponse(false,null,LocalDateTime.now(),"No file found");
         }
