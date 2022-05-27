@@ -65,7 +65,7 @@ public class RoleController {
                 Role r = optionalRole.get();
                 r.setRoleId(role.getRoleId());
                 r.setName(r.getName());
-                roleRepository.save(r);
+                r= roleRepository.save(r);
                 return new BaseResponse(true,r,LocalDateTime.now(),"Successfully updated");
             } else {
                 return new BaseResponse(false,null,LocalDateTime.now(),"No Role with that ID");

@@ -112,7 +112,7 @@ public class CourseController {
                 c.setTeacherId(course.getTeacherId());
                 c.setImageUrl(course.getImageUrl());
                 c.setCreatedAt(c.getCreatedAt());
-                courseRepository.save(c);
+                c = courseRepository.save(c);
                 return new BaseResponse(true, c, LocalDateTime.now(), "Successfully updated");
             } else {
                 return new BaseResponse(false, null, LocalDateTime.now(), "No Request Body!!");

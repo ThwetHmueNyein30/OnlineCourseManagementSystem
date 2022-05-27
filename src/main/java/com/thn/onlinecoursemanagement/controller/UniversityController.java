@@ -96,7 +96,7 @@ public class UniversityController {
                 u.setAddress(university.getAddress());
                 u.setImageUrl(university.getImageUrl());
                 u.setCreatedAt(u.getCreatedAt());
-                universityRepository.save(u);
+                u = universityRepository.save(u);
                 return new BaseResponse(true, u,LocalDateTime.now(),"Successfully update");
             } else {
                 return new BaseResponse(false, null,LocalDateTime.now(),"No university with that ID");
