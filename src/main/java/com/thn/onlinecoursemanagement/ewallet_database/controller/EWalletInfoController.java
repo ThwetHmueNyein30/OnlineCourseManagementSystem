@@ -32,7 +32,7 @@ public class EWalletInfoController {
 
     @GetMapping()
     @CrossOrigin
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ROLE_STUDENT","ROLE_ADMIN"})
     BaseResponse getEWalletInfo() {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
