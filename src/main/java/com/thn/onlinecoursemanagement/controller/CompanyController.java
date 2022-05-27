@@ -67,7 +67,9 @@ public class CompanyController {
         }
         try {
             byte[] bytes = file.getBytes();
+            log.info("file.getOriginalFilename(): {}", file.getOriginalFilename());
             String[] imageName = "\\.".split(Objects.requireNonNull(file.getOriginalFilename()));
+            log.info("image name: {}", util.toJson(imageName));
             Path path = Paths.get(appConfig.getUploadFolder() + imageName[0] + "_" + DateTimeFormatter.ofPattern("ddMMyyyy_hhmmss").format(LocalDateTime.now()) + "." + imageName[1]);
             Files.write(path, bytes);
             Optional<Company> optionalCompany = companyRepository.findById(id);

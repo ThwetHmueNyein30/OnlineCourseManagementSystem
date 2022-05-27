@@ -73,7 +73,7 @@ public class EWalletInfoImpl implements EWalletInfoService {
 
     @Override
     public EWalletInfo getInfoByPersonId(Long personId) {
-        return template.queryForObject(EWALLET_INFO_QUERY, new Object[]{personId}, new EWalletInfoMapper());
+        return template.queryForObject(appConfig.getEWallet().getInfoQuery(), new Object[]{personId}, new EWalletInfoMapper());
     }
     @Override
     public Person getPerson(String keycloakId) {

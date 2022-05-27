@@ -72,6 +72,13 @@ public class CourseRegistrationServiceImpl implements CourseRegistrationService 
         }
 
         Course course = optionalCourse.get();
+
+        EWalletInfo eWalletInfo=eWalletInfoService.getInfoByPersonId(person.getId());
+        if (eWalletInfo.getBalance() < course.getFee()) {
+            return new BaseResponse(false, null,LocalDateTime.now(),"Not Enough money to register");
+        }
+
+
         if (LocalDateTime.now().isBefore(course.getRegisteredFrom()) || LocalDateTime.now().isAfter(course.getRegisteredTo())) {
             return new BaseResponse(false, null,LocalDateTime.now(),"Cannot register within this time" );
         }
@@ -94,10 +101,7 @@ public class CourseRegistrationServiceImpl implements CourseRegistrationService 
         if (!roleName.equals(RoleEnum.STUDENT_ROLE.getCode())) {
             return new BaseResponse(false, null,LocalDateTime.now(),"Only student can register!");
         }
-        EWalletInfo eWalletInfo=eWalletInfoService.getInfoByPersonId(person.getId());
-        if (eWalletInfo.getBalance() < course.getFee()) {
-            return new BaseResponse(false, null,LocalDateTime.now(),"Not Enough money to register");
-        }
+
         try {
             CourseRegistration courseRegistration = new CourseRegistration(person.getId(), course.getId(), course.getFee(), LocalDateTime.now());
             courseRegistrationRepository.save(courseRegistration);
