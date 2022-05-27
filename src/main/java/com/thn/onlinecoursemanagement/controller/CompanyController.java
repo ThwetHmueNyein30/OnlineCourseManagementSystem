@@ -62,13 +62,13 @@ public class CompanyController {
     @Secured("ROLE_ADMIN")
     @CrossOrigin
     BaseResponse uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        log.info("Response : {} ", file);
         if (file.isEmpty()) {
             return new BaseResponse(false, null, LocalDateTime.now(), "No file found");
         }
         try {
             byte[] bytes = file.getBytes();
-            String[] imageName = "\\.".split(Objects.requireNonNull(file.getOriginalFilename()));
-            Path path = Paths.get(appConfig.getUploadFolder() + imageName[0] + "_" + DateTimeFormatter.ofPattern("ddMMyyyy_hhmmss").format(LocalDateTime.now()) + "." + imageName[1]);
+            Path path = Paths.get(appConfig.getUploadFolder() + file.getOriginalFilename());
             Files.write(path, bytes);
             Optional<Company> optionalCompany = companyRepository.findById(id);
             if (optionalCompany.isPresent()) {
