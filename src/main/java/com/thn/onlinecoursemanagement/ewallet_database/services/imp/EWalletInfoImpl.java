@@ -50,7 +50,7 @@ public class EWalletInfoImpl implements EWalletInfoService {
     @Override
     public void deductBalance(Long personId, Long courseId) {
         try {
-            List<EWalletInfo> info = template.query(EWALLET_INFO_QUERY, new Object[]{personId},
+            List<EWalletInfo> info = template.query(appConfig.getEWallet().getInfoQuery(), new Object[]{personId},
                     new EWalletInfoMapper());
             Course course = courseRepository.getById(courseId);
             if (info.isEmpty()) {
@@ -65,7 +65,7 @@ public class EWalletInfoImpl implements EWalletInfoService {
             Double afterBalance = eWalletInfo.getBalance() - course.getFee();
             EWalletHistory eWalletHistory = new EWalletHistory(eWalletInfo.getId(), beforeBalance, afterBalance, "For course registration", LocalDateTime.now(), LocalDateTime.now());
             eWalletHistoryService.insertEWalletHistory(eWalletHistory);
-            template.update(EWALLET_INFO_UPDATE_QUERY, course.getFee(), eWalletInfo.getId());
+            template.update(appConfig.getEWallet().getReduceBalanceQuery(), course.getFee(), eWalletInfo.getId());
         } catch (Exception e) {
             log.info("Exception: ", e);
         }
@@ -82,11 +82,10 @@ public class EWalletInfoImpl implements EWalletInfoService {
 
     @Override
     public int insertEWalletIfo(EWalletInfo eWalletInfo) {
-        log.info("InsertEWalletInfo: {}", eWalletInfo);
         try {
             Object[] params = new Object[] { eWalletInfo.getOwnerId(),eWalletInfo.getCreatedAt(),eWalletInfo.getBalance(),eWalletInfo.getAccountName()};
             int[] types = new int[] { Types.BIGINT, Types.TIMESTAMP,Types.DOUBLE,Types.VARCHAR };
-            return template.update(EWALLET_INFO_INSERT_QUERY,  params,types);
+            return template.update(appConfig.getEWallet().getInsertQuery(),  params,types);
         } catch (Exception e) {
             log.error("Exception  in insertEWalletInfo : " + e);
             return -1;
@@ -97,7 +96,7 @@ public class EWalletInfoImpl implements EWalletInfoService {
     public BaseResponse updateEWalletInfo(Long ownerId, EWalletInfo info) {
         EWalletInfo eWalletInfo;
         try {
-            eWalletInfo = template.queryForObject(EWALLET_INFO_QUERY, new Object[]{ownerId}, new EWalletInfoMapper());
+            eWalletInfo = template.queryForObject(appConfig.getEWallet().getInfoUpdateQuery(), new Object[]{ownerId}, new EWalletInfoMapper());
             if (eWalletInfo == null) {
                 return new BaseResponse(false, null, LocalDateTime.now(), "No EWalletInfo");
             }

@@ -32,7 +32,7 @@ public class EWalletHistoryImpl implements EWalletHistoryService {
 
     @Override
     public List<EWalletHistory> getAllEWalletHistory(Long eWalletId) {
-        return template.query(EWALLET_HISTORY_QUERY,
+        return template.query(appConfig.getEWallet().getHistoryQuery(),
                 new Object[] { eWalletId },
                 new EWalletHistoryMapper());
     }
@@ -43,7 +43,7 @@ public class EWalletHistoryImpl implements EWalletHistoryService {
                 eWalletHistory.getCreatedAt(), eWalletHistory.getUpdatedAt()
         };
         int[] types = new int[] { Types.BIGINT, Types.DOUBLE, Types.DOUBLE, Types.VARCHAR,Types.TIMESTAMP,Types.TIMESTAMP };
-        template.update(EWALLET_HISTORY_INSERT_QUERY,  params,types);
+        template.update(appConfig.getEWallet().getHistoryInsert(),  params,types);
     }
 
 }
