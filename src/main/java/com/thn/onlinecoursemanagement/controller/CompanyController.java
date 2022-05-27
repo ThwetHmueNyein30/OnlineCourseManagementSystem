@@ -80,7 +80,8 @@ public class CompanyController {
                 return new BaseResponse(false, null, LocalDateTime.now(), "No company with that ID");
             }
         } catch (Exception e) {
-            return new BaseResponse(true, null, LocalDateTime.now(), "File upload Fail!!");
+            log.info("Exception : ",e);
+            return new BaseResponse(false, null, LocalDateTime.now(), "File upload Fail!!");
         }
     }
 

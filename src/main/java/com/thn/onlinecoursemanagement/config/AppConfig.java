@@ -17,7 +17,8 @@ public class AppConfig {
     Datasource ewalletDatasource;
     public static class EWallet{
         private String infoQuery;
-        private String updateQuery;
+        private String reduceBalanceQuery;
+        private String infoUpdateQuery;
         private String insertQuery;
         private String historyQuery;
         private String historyInsert;
@@ -30,12 +31,20 @@ public class AppConfig {
             this.infoQuery = infoQuery;
         }
 
-        public String getUpdateQuery() {
-            return updateQuery;
+        public String getReduceBalanceQuery() {
+            return reduceBalanceQuery;
         }
 
-        public void setUpdateQuery(String updateQuery) {
-            this.updateQuery = updateQuery;
+        public void setReduceBalanceQuery(String reduceBalanceQuery) {
+            this.reduceBalanceQuery = reduceBalanceQuery;
+        }
+
+        public String getInfoUpdateQuery() {
+            return infoUpdateQuery;
+        }
+
+        public void setInfoUpdateQuery(String infoUpdateQuery) {
+            this.infoUpdateQuery = infoUpdateQuery;
         }
 
         public String getInsertQuery() {
