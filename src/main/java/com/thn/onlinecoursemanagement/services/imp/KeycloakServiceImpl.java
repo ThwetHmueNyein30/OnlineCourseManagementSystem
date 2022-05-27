@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -20,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -57,7 +55,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     @Override
     public UserRepresentation createUser(Person person) {
-        UsersResource usersResource = keycloak.realm(environment.getProperty("keycloak.realm")).users();
+        UsersResource usersResource = keycloak.realm(getRealm()).users();
         CredentialRepresentation credentialRepresentation = createPasswordCredentials();
         UserRepresentation kcUser = new UserRepresentation();
         kcUser.setCredentials(Collections.singletonList(credentialRepresentation));
@@ -89,6 +87,18 @@ public class KeycloakServiceImpl implements KeycloakService {
             log.error("Exception : " + e);
         }
         return kcUser;
+    }
+
+    @Override
+    public UserRepresentation deleteUser(Person person) {
+       List<UserRepresentation> userRepresentations= keycloak.realm(getRealm()).users().search(person.getName());
+        for (UserRepresentation userRep : userRepresentations) {
+            if (person.getName().equals(userRep.getUsername())) {
+                keycloak.realm(getRealm()).users().delete(userRep.getId());
+                return  userRep;
+            }
+        }
+        return null;
     }
 
     @Override

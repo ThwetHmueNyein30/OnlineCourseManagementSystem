@@ -13,5 +13,6 @@ public interface EWalletInfoService {
     EWalletInfo getInfoByPersonId (Long personId);
     Person getPerson(String keycloakId);
     int insertEWalletIfo (EWalletInfo eWalletInfo);
+    int deleteEWalletInfo(Long ownerId);
     BaseResponse updateEWalletInfo(Long ownerId, EWalletInfo eWalletInfo);
 }

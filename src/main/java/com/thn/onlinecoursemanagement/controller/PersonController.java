@@ -43,8 +43,8 @@ public class PersonController {
     @PutMapping("{id}")
     @CrossOrigin
     @Secured("ROLE_ADMIN")
-    BaseResponse updatePerson(@PathVariable Long id, @RequestBody Person person) {
-        return personService.updatePerson(id,person);
+    BaseResponse updatePerson(@PathVariable Long id, @RequestBody PersonEWalletRequestBody personEWalletRequestBody) {
+        return personService.updatePerson(id,personEWalletRequestBody);
     }
 
     @DeleteMapping("{id}")

@@ -13,7 +13,7 @@ public interface PersonService {
     BaseResponse createPerson(PersonEWalletRequestBody requestBody);
     BaseResponse deletePerson(Long id);
     BaseResponse uploadImage(Long id, MultipartFile file);
-    BaseResponse updatePerson(Long id, Person person);
+    BaseResponse updatePerson(Long id, PersonEWalletRequestBody personEWalletRequestBody);
     BaseResponse getAllPerson(String role);
     BaseResponse getPersonByName(String userName);
 }

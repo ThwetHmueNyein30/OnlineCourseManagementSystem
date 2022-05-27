@@ -102,8 +102,7 @@ public class CompanyController {
                 c.setName(company.getName());
                 c.setAddress(company.getAddress());
                 c.setImageUrl(company.getImageUrl());
-                c.setCreatedAt(c.getCreatedAt());
-                companyRepository.save(c);
+                c= companyRepository.save(c);
                 return new BaseResponse(true, c, LocalDateTime.now(), "Successfully Updated");
             } else {
                 return new BaseResponse(false, null, LocalDateTime.now(), "No data with that ID");

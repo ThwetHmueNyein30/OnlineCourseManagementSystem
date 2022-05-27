@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -86,8 +85,14 @@ public class PersonServiceImpl implements PersonService {
         try {
             Optional<Person> optionalPerson = personRepository.findById(id);
             if (optionalPerson.isPresent()) {
+                log.info("Optional Person : {}", optionalPerson);
                 Person p = optionalPerson.get();
+                UserRepresentation userRepresentation=keycloakService.deleteUser(p);
+                if(userRepresentation==null){
+                    return new BaseResponse(false,null,LocalDateTime.now(),"Cannot delete in keycloak");
+                }
                 personRepository.deleteById(id);
+                eWalletInfoService.deleteEWalletInfo(p.getId());
                 return new BaseResponse(true,p,LocalDateTime.now(),"Successfully deleted");
             } else {
                 return new BaseResponse(false,null,LocalDateTime.now(),"No course with that ID");
@@ -124,32 +129,41 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public BaseResponse updatePerson(Long id, Person person) {
-
-        if(person == null){
+    public BaseResponse updatePerson(Long id, PersonEWalletRequestBody requestBody) {
+        if(id == null){
             return new BaseResponse(false,null,LocalDateTime.now(),"Fail to update for that id");
+        }
+        if(requestBody == null){
+            return new BaseResponse(false,null,LocalDateTime.now(),"No request body");
+        }
+        Person person=requestBody.getPerson();
+
+        if(person==null){
+            return new BaseResponse(false,null,LocalDateTime.now(),"No person data");
         }
         try {
             Optional<Person> optionalPerson = personRepository.findById(id);
             if (optionalPerson.isPresent()) {
                 Person p = optionalPerson.get();
-                p.setName(person.getName());
                 p.setAddress(person.getAddress());
                 p.setBirthDay(person.getBirthDay());
                 p.setRoleId(person.getRoleId());
                 p.setUniversityId(person.getUniversityId());
                 p.setCompanyId(person.getCompanyId());
-                p.setStatus(person.getStatus());
-                p.setImageUrl(person.getImageUrl());
                 p.setPhone(person.getPhone());
-                p.setCreatedAt(p.getCreatedAt());
                 p.setEmail(person.getEmail());
-                personRepository.save(p);
-                return new BaseResponse(true,p,LocalDateTime.now(),"Successfully updated");
+                EWalletInfo eWalletInfo=eWalletInfoService.getInfoByPersonId(id);
+                if(eWalletInfo==null){
+                    return new BaseResponse(false,null,LocalDateTime.now(),"Fail to update for that id");
+                }
+                p = personRepository.save(p);
+                eWalletInfoService.updateEWalletInfo(person.getId(),new EWalletInfo(eWalletInfo.getId(),eWalletInfo.getOwnerId(),eWalletInfo.getCreatedAt(),requestBody.getBalance(),person.getName()));
+                return new BaseResponse(true,new PersonEWalletRequestBody(p,requestBody.getBalance()),LocalDateTime.now(),"Successfully updated");
             } else {
                 return new BaseResponse(false,null,LocalDateTime.now(),"Fail to update for that id");
             }
         } catch (Exception e) {
+            log.info("Exception : ", e);
             return new BaseResponse(false,null,LocalDateTime.now(),"Fail to update");
         }
     }

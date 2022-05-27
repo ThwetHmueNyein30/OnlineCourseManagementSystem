@@ -73,7 +73,11 @@ public class EWalletInfoImpl implements EWalletInfoService {
 
     @Override
     public EWalletInfo getInfoByPersonId(Long personId) {
-        return template.queryForObject(appConfig.getEWallet().getInfoQuery(), new Object[]{personId}, new EWalletInfoMapper());
+        try {
+            return template.queryForObject(appConfig.getEWallet().getInfoQuery(), new Object[]{personId}, new EWalletInfoMapper());
+        } catch (Exception e) {
+            return null;
+        }
     }
     @Override
     public Person getPerson(String keycloakId) {
@@ -93,10 +97,23 @@ public class EWalletInfoImpl implements EWalletInfoService {
     }
 
     @Override
+    public int deleteEWalletInfo(Long ownerId) {
+        try {
+            Object[] args = new Object[] {ownerId};
+            return template.update(appConfig.getEWallet().getInfoDeleteQuery(),args);
+        } catch (Exception e) {
+            log.error("Exception : " + e);
+            return -1;
+        }
+    }
+
+    @Override
     public BaseResponse updateEWalletInfo(Long ownerId, EWalletInfo info) {
+
         EWalletInfo eWalletInfo;
         try {
-            eWalletInfo = template.queryForObject(appConfig.getEWallet().getInfoUpdateQuery(), new Object[]{ownerId}, new EWalletInfoMapper());
+            eWalletInfo = template.queryForObject(appConfig.getEWallet().getInfoQuery(), new Object[]{info.getOwnerId()}, new EWalletInfoMapper());
+
             if (eWalletInfo == null) {
                 return new BaseResponse(false, null, LocalDateTime.now(), "No EWalletInfo");
             }
@@ -105,6 +122,7 @@ public class EWalletInfoImpl implements EWalletInfoService {
             eWalletInfo.setCreatedAt(eWalletInfo.getCreatedAt());
             eWalletInfo.setOwnerId(info.getOwnerId());
             eWalletInfo.setBalance(info.getBalance());
+            log.info("Update Id: {} ",template.update(appConfig.getEWallet().getInfoUpdateQuery(),eWalletInfo.getOwnerId(),eWalletInfo.getCreatedAt(),eWalletInfo.getBalance(),eWalletInfo.getAccountName(),info.getId()));
             return new BaseResponse(true, eWalletInfo, LocalDateTime.now(), "Successfully updated");
         } catch (Exception e) {
             return new BaseResponse(false, null, LocalDateTime.now(), "Fail to update");

@@ -19,9 +19,18 @@ public class AppConfig {
         private String infoQuery;
         private String reduceBalanceQuery;
         private String infoUpdateQuery;
+        private String infoDeleteQuery;
         private String insertQuery;
         private String historyQuery;
         private String historyInsert;
+
+        public String getInfoDeleteQuery() {
+            return infoDeleteQuery;
+        }
+
+        public void setInfoDeleteQuery(String infoDeleteQuery) {
+            this.infoDeleteQuery = infoDeleteQuery;
+        }
 
         public String getInfoQuery() {
             return infoQuery;
