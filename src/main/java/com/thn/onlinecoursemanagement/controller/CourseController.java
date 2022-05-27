@@ -2,11 +2,12 @@ package com.thn.onlinecoursemanagement.controller;
 
 import com.thn.onlinecoursemanagement.config.AppConfig;
 import com.thn.onlinecoursemanagement.constants.Util;
+import com.thn.onlinecoursemanagement.entities.Company;
 import com.thn.onlinecoursemanagement.entities.Course;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
+import com.thn.onlinecoursemanagement.payload.response.CompanyResponse;
 import com.thn.onlinecoursemanagement.payload.response.CourseResponse;
 import com.thn.onlinecoursemanagement.repositories.CourseRepository;
-import com.thn.onlinecoursemanagement.services.KeycloakService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -46,12 +48,8 @@ public class CourseController {
     @CrossOrigin
     @Secured({"ROLE_TEACHER","ROLE_ADMIN"})
     BaseResponse createCourse(@RequestBody Course course) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         if (course == null) {
-            response.setStatus(false);
-            response.setMessage("No request body");
-            return response;
+            return new BaseResponse(false,null,LocalDateTime.now(),"No request body");
         }
         try {
             course = courseRepository.save(new Course(course.getName(),
@@ -63,29 +61,18 @@ public class CourseController {
                     course.getStatus(),
                     course.getTeacherId(),
                     null));
-            response.setResult(course);
-            response.setStatus(true);
-            response.setMessage("Successfully upload!");
-
+            return new BaseResponse(true,course,LocalDateTime.now(),"Successfully upload");
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Fail to upload");
-            log.info("Exception : ", e);
+            return new BaseResponse(false,null,LocalDateTime.now(),"Fail to create course");
         }
-        return response;
-
     }
 
     @PostMapping("/upload/{id}")
     @CrossOrigin
     @Secured({"ROLE_TEACHER","ROLE_ADMIN"})
     BaseResponse uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         if (file.isEmpty()) {
-            response.setStatus(false);
-            response.setMessage("No file found");
-            return response;
+            return new BaseResponse(false,null,LocalDateTime.now(),"File is empty");
         }
         try {
             byte[] bytes = file.getBytes();
@@ -96,33 +83,21 @@ public class CourseController {
                 Course c = optionalCourse.get();
                 c.setImageUrl(path.toString());
                 courseRepository.save(c);
-                response.setStatus(true);
-                response.setResult(c);
-                response.setMessage("File upload successful!!");
+                return new BaseResponse(true,c,LocalDateTime.now(),"Successfully created!!!");
             } else {
-                response.setStatus(false);
-                response.setMessage("File upload Fail!!");
+                return new BaseResponse(false,null,LocalDateTime.now(),"No course with that ID.");
             }
         } catch (Exception e) {
-            log.info("Exception : ", e);
-            response.setStatus(false);
-            response.setMessage("File upload Fail!!");
+            return new BaseResponse(false,null,LocalDateTime.now(),"Fail to upload Image");
         }
-        return response;
-
     }
-
 
     @PutMapping("{id}")
     @CrossOrigin
     @Secured({"ROLE_TEACHER","ROLE_ADMIN"})
     BaseResponse updateCourse(@PathVariable Long id, @RequestBody Course course) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         if (course == null) {
-            response.setStatus(false);
-            response.setMessage("No Request Body");
-            return response;
+            return new BaseResponse(false, null, LocalDateTime.now(), "No Request Body!!");
         }
         try {
             Optional<Course> optionalCourse = courseRepository.findById(id);
@@ -138,81 +113,52 @@ public class CourseController {
                 c.setImageUrl(course.getImageUrl());
                 c.setCreatedAt(c.getCreatedAt());
                 courseRepository.save(c);
-                response.setResult(c);
-                response.setStatus(true);
-                response.setMessage("Successfully updated");
+                return new BaseResponse(true, c, LocalDateTime.now(), "Successfully updated");
             } else {
-                response.setStatus(false);
-                response.setMessage("Failed to update");
+                return new BaseResponse(false, null, LocalDateTime.now(), "No Request Body!!");
             }
-
         } catch (Exception e) {
-            log.info("Exception : ", e);
-            response.setStatus(false);
-            response.setMessage("File upload Fail!!");
+            return new BaseResponse(false, null, LocalDateTime.now(), "File upload fail");
         }
-        return response;
-
     }
 
     @DeleteMapping("{id}")
     @CrossOrigin
     @Secured({"ROLE_TEACHER","ROLE_ADMIN"})
     BaseResponse deleteCourse(@PathVariable Long id) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         try {
             Optional<Course> optionalCourse = courseRepository.findById(id);
             if (optionalCourse.isPresent()) {
                 Course c = optionalCourse.get();
                 courseRepository.deleteById(id);
-                response.setStatus(true);
-                response.setMessage("Successfully Deleted");
-                response.setResult(c);
+                return new BaseResponse(true, c, LocalDateTime.now(), "Successful Deleted");
             } else {
-                response.setStatus(false);
-                response.setMessage("There is no data with that ID.");
+                return new BaseResponse(false, null, LocalDateTime.now(), "No Course with that ID");
             }
         } catch (Exception e) {
-            log.info("Exception : ", e);
-            response.setMessage("File to Delete");
+            return new BaseResponse(false, null, LocalDateTime.now(), "Fail to delete");
         }
-        return response;
-
     }
 
     @GetMapping()
     @CrossOrigin
     @Secured({"ROLE_TEACHER","ROLE_ADMIN","ROLE_STUDENT"})
     BaseResponse getALlCourses() {
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        authentication.getAuthorities().forEach(a->log.info(String.valueOf(a)));
+        List<Course> courseList = courseRepository.findAll();
+        List<CourseResponse> courseResponseList = courseList.stream().map(this::convertFromCourse).collect(Collectors.toList());
+        return new BaseResponse(true, courseResponseList, LocalDateTime.now(), "Successful");
+    }
 
-        List<CourseResponse> courseResponseList = new ArrayList<>();
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
-        try {
-            response.setStatus(true);
-            for (Course course : courseRepository.findAll()) {
-                CourseResponse courseResponse=new CourseResponse(course.getId(),course.getName(),
-                        course.getCreatedAt(),
-                        course.getImageUrl() == null ? null : util.encodeFileToBase64Binary(course.getImageUrl()),
-                        course.getContent(),
-                        course.getFee(),
-                        course.getRegisteredTo(),
-                        course.getRegisteredFrom(),
-                        course.getStatus(),
-                        course.getTeacherId());
-                courseResponseList.add(courseResponse);
-            }
-            response.setResult(courseResponseList);
-            response.setMessage("Success");
-        } catch (Exception e) {
-            log.info("Exception : ", e);
-            response.setMessage("Failure");
-            response.setStatus(false);
-        }
-        return response;
+    CourseResponse convertFromCourse(Course course){
+        return new CourseResponse(course.getId(),course.getName(),
+                course.getCreatedAt(),
+                course.getImageUrl() == null ? null : util.encodeFileToBase64Binary(course.getImageUrl()),
+                course.getContent(),
+                course.getFee(),
+                course.getRegisteredTo(),
+                course.getRegisteredFrom(),
+                course.getStatus(),
+                course.getTeacherId());
     }
 
 }

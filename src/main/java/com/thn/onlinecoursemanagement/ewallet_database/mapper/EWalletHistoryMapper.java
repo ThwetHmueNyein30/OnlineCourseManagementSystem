@@ -14,14 +14,13 @@ public class EWalletHistoryMapper implements RowMapper<EWalletHistory> {
 
     @Override
     public EWalletHistory mapRow(ResultSet rs, int i) throws SQLException {
-        EWalletHistory eWalletHistory = new EWalletHistory(rs.getLong(1),
+        return new EWalletHistory(rs.getLong(1),
                 rs.getLong(2),
                 rs.getDouble(3),
                 rs.getDouble(4),
                 rs.getString(5),
                 rs.getTimestamp(6).toLocalDateTime(),
                 rs.getTimestamp(7).toLocalDateTime());
-        return eWalletHistory;
     }
 
 

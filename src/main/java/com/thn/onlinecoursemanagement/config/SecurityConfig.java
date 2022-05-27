@@ -53,10 +53,4 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                 .anyRequest()
                 .permitAll();
     }
-
-    @Bean
-    public KeycloakSecurityContext KeyCloakSecurityContext (){
-        return new KeycloakSecurityContext();
-    }
-
 }

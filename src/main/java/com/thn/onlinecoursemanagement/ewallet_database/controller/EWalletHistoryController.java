@@ -1,7 +1,7 @@
-package com.thn.onlinecoursemanagement.controller;
+package com.thn.onlinecoursemanagement.ewallet_database.controller;
 
 import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletHistory;
-import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletHistoryService;
+import com.thn.onlinecoursemanagement.ewallet_database.services.EWalletHistoryService;
 import com.thn.onlinecoursemanagement.payload.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.annotation.Secured;

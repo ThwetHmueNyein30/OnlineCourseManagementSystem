@@ -57,7 +57,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     @Override
     public UserRepresentation createUser(Person person) {
-        UsersResource usersResource = keycloak.realm(getRealm()).users();
+        UsersResource usersResource = keycloak.realm(environment.getProperty("keycloak.realm")).users();
         CredentialRepresentation credentialRepresentation = createPasswordCredentials();
         UserRepresentation kcUser = new UserRepresentation();
         kcUser.setCredentials(Collections.singletonList(credentialRepresentation));
@@ -75,6 +75,8 @@ public class KeycloakServiceImpl implements KeycloakService {
 
         try {
             Response response = usersResource.create(kcUser);
+            log.info("Response in keycloak creation : {}", response);
+            log.info("Response Status : {}", response.getStatusInfo());
             if (response.getStatus() == 201) {
                 List<UserRepresentation> search= keycloak.realm(getRealm()).users().search(kcUser.getUsername());
                 kcUser.setId(search.get(0).getId());
@@ -102,43 +104,44 @@ public class KeycloakServiceImpl implements KeycloakService {
         return passwordCredentials;
     }
 
-    public List<String> getAllRoles(){
-        ClientRepresentation clientRep = keycloak
-                .realm(getRealm())
-                .clients()
-                .findByClientId(getClientId())
-                .get(0);
-        List<String> availableRoles = keycloak
-                .realm(getRealm())
-                .clients()
-                .get(clientRep.getId())
-                .roles()
-                .list()
-                .stream()
-                .map(role -> role.getName())
-                .collect(Collectors.toList());
-        return availableRoles;
-    }
+//    public List<String> getAllRoles(){
+//        ClientRepresentation clientRep = keycloak
+//                .realm(getRealm())
+//                .clients()
+//                .findByClientId(getClientId())
+//                .get(0);
+//
+//        return keycloak
+//                .realm(getRealm())
+//                .clients()
+//                .get(clientRep.getId())
+//                .roles()
+//                .list()
+//                .stream()
+//                .map(RoleRepresentation::getName)
+//                .collect(Collectors.toList());
+//    }
 
-    public void addRealmRole(String new_role_name){
-        if(!getAllRoles().contains(new_role_name)){
-            RoleRepresentation roleRep = new  RoleRepresentation();
-            roleRep.setName(new_role_name);
-            roleRep.setDescription("role_" + new_role_name);
-            ClientRepresentation clientRep = keycloak
-                    .realm(getRealm())
-                    .clients()
-                    .findByClientId(getClientId())
-                    .get(0);
-            keycloak.realm(getRealm())
-                    .clients()
-                    .get(clientRep.getId())
-                    .roles()
-                    .create(roleRep);
-        }
-    }
+//    public void addRealmRole(String new_role_name){
+//        if(!getAllRoles().contains(new_role_name)){
+//            RoleRepresentation roleRep = new  RoleRepresentation();
+//            roleRep.setName(new_role_name);
+//            roleRep.setDescription("role_" + new_role_name);
+//            ClientRepresentation clientRep = keycloak
+//                    .realm(getRealm())
+//                    .clients()
+//                    .findByClientId(getClientId())
+//                    .get(0);
+//            keycloak.realm(getRealm())
+//                    .clients()
+//                    .get(clientRep.getId())
+//                    .roles()
+//                    .create(roleRep);
+//        }
+//    }
 
     public void addRealmRoleToUser(String userName, String role_name){
+        log.info("AddRealmRoleToUser : {}", userName + " "+ role_name);
         String client_id = keycloak
                 .realm(getRealm())
                 .clients()
@@ -169,7 +172,7 @@ public class KeycloakServiceImpl implements KeycloakService {
         roleRepresentationList.add(keycloak
                 .realm(getRealm())
                 .roles()
-                .get(role_name)
+                .get("training_"+role_name)
                 .toRepresentation());
         user.roles().clientLevel(client_id).add(roleToAdd);
         user.roles().realmLevel().add(roleRepresentationList);

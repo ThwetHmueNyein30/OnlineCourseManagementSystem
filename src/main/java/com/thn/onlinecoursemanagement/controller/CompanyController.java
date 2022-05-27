@@ -16,10 +16,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -41,7 +41,6 @@ public class CompanyController {
         this.util = util;
     }
 
-
     @PostMapping()
     @Secured("ROLE_ADMIN")
     @CrossOrigin
@@ -49,77 +48,51 @@ public class CompanyController {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
         if (company == null) {
-            response.setStatus(false);
-            response.setMessage("Fail to upload");
-            return response;
+            return new BaseResponse(false, null, LocalDateTime.now(), "Fail to upload");
         }
         try {
             company = companyRepository.save(new Company(company.getName(), company.getAddress(), LocalDateTime.now(), null));
-            response.setStatus(true);
-            response.setMessage("Successfully upload!");
-            response.setResult(company);
-
+            return new BaseResponse(true, company, LocalDateTime.now(), "Successful!!");
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Fail to upload");
-            log.info("Exception : ", e);
+            return new BaseResponse(false, null, LocalDateTime.now(), "Fail to upload");
         }
-        return response;
     }
 
     @PostMapping("/upload/{id}")
     @Secured("ROLE_ADMIN")
     @CrossOrigin
     BaseResponse uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         if (file.isEmpty()) {
-            response.setStatus(false);
-            response.setMessage("No file found");
-            return response;
+            return new BaseResponse(false, null, LocalDateTime.now(), "No file found");
         }
         try {
             byte[] bytes = file.getBytes();
-            String [] imageName= Objects.requireNonNull(file.getOriginalFilename()).split("\\.");
-
-            Path path = Paths.get(appConfig.getUploadFolder() +imageName[0] +"_"+ DateTimeFormatter.ofPattern("ddMMyyyy_hhmmss").format(LocalDateTime.now())+"."+ imageName[1]);
-            log.info("Image Path : {}", path);
+            String[] imageName = "\\.".split(Objects.requireNonNull(file.getOriginalFilename()));
+            Path path = Paths.get(appConfig.getUploadFolder() + imageName[0] + "_" + DateTimeFormatter.ofPattern("ddMMyyyy_hhmmss").format(LocalDateTime.now()) + "." + imageName[1]);
             Files.write(path, bytes);
             Optional<Company> optionalCompany = companyRepository.findById(id);
             if (optionalCompany.isPresent()) {
                 Company c = optionalCompany.get();
                 c.setImageUrl(path.toString());
                 companyRepository.save(c);
-                response.setResult(c);
+                return new BaseResponse(true, c, LocalDateTime.now(), "File upload successful!!");
+            } else {
+                return new BaseResponse(false, null, LocalDateTime.now(), "No company with that ID");
             }
-            response.setStatus(true);
-            response.setMessage("File upload successful!!");
-            log.info("Response : {}", response);
-
         } catch (Exception e) {
-            response.setMessage("File upload Fail!!");
-            response.setStatus(false);
-            log.info("Exception : ", e);
-
+            return new BaseResponse(true, null, LocalDateTime.now(), "File upload Fail!!");
         }
-        return response;
     }
 
     @PutMapping("{id}")
     @Secured("ROLE_ADMIN")
     @CrossOrigin
     BaseResponse updateCompany(@PathVariable Long id, @RequestBody Company company) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         if (id == null) {
-            response.setStatus(false);
-            response.setMessage("No Path id");
-            return response;
+            return new BaseResponse(false, null, LocalDateTime.now(), "No ID found");
         }
         if (company == null) {
-            response.setStatus(false);
-            response.setMessage("No request body");
-            return response;
+            return new BaseResponse(false, null, LocalDateTime.now(), "No request body");
         }
         try {
             Optional<Company> optionalCompany = companyRepository.findById(id);
@@ -130,22 +103,13 @@ public class CompanyController {
                 c.setImageUrl(company.getImageUrl());
                 c.setCreatedAt(c.getCreatedAt());
                 companyRepository.save(c);
-                response.setResult(c);
-                response.setStatus(true);
-                response.setMessage("Successfully Updated");
-                return response;
+                return new BaseResponse(true, c, LocalDateTime.now(), "Successfully Updated");
             } else {
-                response.setStatus(false);
-                response.setMessage("Fail to update");
-                return response;
+                return new BaseResponse(false, null, LocalDateTime.now(), "No data with that ID");
             }
 
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Fail to update");
-            log.info("Exception : ", e);
-            return response;
-
+            return new BaseResponse(false, null, LocalDateTime.now(), "Fail to update");
         }
 
     }
@@ -154,49 +118,35 @@ public class CompanyController {
     @Secured("ROLE_ADMIN")
     @CrossOrigin
     BaseResponse deleteCompany(@PathVariable Long id) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         try {
             Optional<Company> optionalCompany = companyRepository.findById(id);
             if (optionalCompany.isPresent()) {
                 Company company = optionalCompany.get();
                 companyRepository.deleteById(id);
-                response.setStatus(true);
-                response.setMessage("Successfully Deleted");
-                response.setResult(company);
+                return new BaseResponse(true, company, LocalDateTime.now(), "Successful");
             } else {
-                response.setStatus(false);
-                response.setMessage("Fail to delete");
+                return new BaseResponse(false, null, LocalDateTime.now(), "No company exist with that Id");
             }
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Fail to delete");
-            log.info("Exception : ", e);
+            return new BaseResponse(false, null, LocalDateTime.now(), "Fail to delete");
         }
-        return response;
-
     }
 
     @GetMapping()
     @CrossOrigin
+    @Secured("ROLE_ADMIN")
     BaseResponse getAllCompanies() {
-        List<CompanyResponse> companyList = new ArrayList<>();
-        BaseResponse response = new BaseResponse();
-        response.setStatus(true);
-        try {
-            for (Company company : companyRepository.findAll()) {
+        List<Company> companyList = companyRepository.findAll();
+        List<CompanyResponse> companyResponseList = companyList.stream().map(this::convertFromCompany).collect(Collectors.toList());
+        return new BaseResponse(true, companyResponseList, LocalDateTime.now(), "Successful");
+    }
 
-                CompanyResponse companyResponse = new CompanyResponse(company.getId(), company.getName(), company.getCreatedAt(),
-                        company.getImageUrl() == null ? null : util.encodeFileToBase64Binary(company.getImageUrl()), company.getAddress());
-                companyList.add(companyResponse);
-            }
-            response.setResult(companyList);
-            response.setMessage("Success");
-        } catch (Exception e) {
-            response.setMessage("Fail to delete");
-            log.info("Exception : ", e);
-        }
-        return response;
-
+    CompanyResponse convertFromCompany(Company company) {
+        return new CompanyResponse(
+                company.getId(),
+                company.getName(),
+                company.getCreatedAt(),
+                company.getImageUrl() == null ? null : util.encodeFileToBase64Binary(company.getImageUrl()),
+                company.getAddress());
     }
 }

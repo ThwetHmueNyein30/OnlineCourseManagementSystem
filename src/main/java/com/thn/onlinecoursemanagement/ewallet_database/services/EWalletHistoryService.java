@@ -1,4 +1,4 @@
-package com.thn.onlinecoursemanagement.ewallet_database.repositories;
+package com.thn.onlinecoursemanagement.ewallet_database.services;
 
 import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletHistory;
 

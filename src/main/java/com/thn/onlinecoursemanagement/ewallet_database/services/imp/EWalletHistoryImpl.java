@@ -1,10 +1,10 @@
-package com.thn.onlinecoursemanagement.ewallet_database.repositories.imp;
+package com.thn.onlinecoursemanagement.ewallet_database.services.imp;
 
+import com.thn.onlinecoursemanagement.config.AppConfig;
 import com.thn.onlinecoursemanagement.ewallet_database.mapper.EWalletHistoryMapper;
 import com.thn.onlinecoursemanagement.ewallet_database.entities.EWalletHistory;
 import com.thn.onlinecoursemanagement.ewallet_database.pools.EWalletPool;
-import com.thn.onlinecoursemanagement.ewallet_database.repositories.EWalletHistoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.thn.onlinecoursemanagement.ewallet_database.services.EWalletHistoryService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -19,17 +19,15 @@ import static com.thn.onlinecoursemanagement.constants.Constant.EWALLET_HISTORY_
  * @Date 09/05/2022
  */
 
-
-//
-
 @Component
 public class EWalletHistoryImpl implements EWalletHistoryService {
 
-    @Autowired
     private final JdbcTemplate template;
+    final AppConfig appConfig;
 
-    public EWalletHistoryImpl() {
-        this.template = new JdbcTemplate(EWalletPool.getInstance().getDataSource());
+    public EWalletHistoryImpl(AppConfig appConfig) {
+        this.appConfig = appConfig;
+        this.template = new JdbcTemplate(EWalletPool.getInstance(appConfig).getDataSource());
     }
 
     @Override

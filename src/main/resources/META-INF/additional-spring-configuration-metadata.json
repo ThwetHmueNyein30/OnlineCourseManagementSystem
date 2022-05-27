@@ -4,5 +4,15 @@
       "name": "kc-auth-server-url",
       "type": "java.lang.String",
       "description": "Description for kc-auth-server-url."
-  }
-] }
+    },
+    {
+      "name": "config.e-wallet.insert-query",
+      "type": "java.lang.String",
+      "description": "Description for config.e-wallet.insert-query."
+    },
+    {
+      "name": "config.upload-folder",
+      "type": "java.lang.String",
+      "description": "Description for config.upload-folder."
+    }
+  ] }

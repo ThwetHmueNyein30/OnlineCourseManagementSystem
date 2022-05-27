@@ -13,11 +13,112 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
     String uploadFolder;
     EWallet eWallet;
+
+    Datasource ewalletDatasource;
     public static class EWallet{
         private String infoQuery;
         private String updateQuery;
         private String insertQuery;
         private String historyQuery;
         private String historyInsert;
+
+        public String getInfoQuery() {
+            return infoQuery;
+        }
+
+        public void setInfoQuery(String infoQuery) {
+            this.infoQuery = infoQuery;
+        }
+
+        public String getUpdateQuery() {
+            return updateQuery;
+        }
+
+        public void setUpdateQuery(String updateQuery) {
+            this.updateQuery = updateQuery;
+        }
+
+        public String getInsertQuery() {
+            return insertQuery;
+        }
+
+        public void setInsertQuery(String insertQuery) {
+            this.insertQuery = insertQuery;
+        }
+
+        public String getHistoryQuery() {
+            return historyQuery;
+        }
+
+        public void setHistoryQuery(String historyQuery) {
+            this.historyQuery = historyQuery;
+        }
+
+        public String getHistoryInsert() {
+            return historyInsert;
+        }
+
+        public void setHistoryInsert(String historyInsert) {
+            this.historyInsert = historyInsert;
+        }
     }
+
+    public static class Datasource {
+        private String url;
+        private String user;
+        private String password;
+        private String driverType;
+        private String datasourceClassname;
+        private String driverClassname;
+
+        public String getDriverClassname() {
+            return driverClassname;
+        }
+
+        public void setDriverClassname(String driverClassname) {
+            this.driverClassname = driverClassname;
+        }
+
+        public String getDatasourceClassname() {
+            return datasourceClassname;
+        }
+
+        public void setDatasourceClassname(String datasourceClassname) {
+            this.datasourceClassname = datasourceClassname;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getDriverType() {
+            return driverType;
+        }
+
+        public void setDriverType(String driverType) {
+            this.driverType = driverType;
+        }
+    }
+
+
 }

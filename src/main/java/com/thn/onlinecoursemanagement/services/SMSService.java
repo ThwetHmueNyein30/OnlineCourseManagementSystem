@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.thn.onlinecoursemanagement.payload.request.SMSRequestBody;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,26 +20,27 @@ import static com.thn.onlinecoursemanagement.constants.Constant.BASE_URL;
 @Slf4j
 public class SMSService {
 
-    @Autowired
-    RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    public String createSMS(SMSRequestBody requestBody) {
+    public SMSService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    public void createSMS(SMSRequestBody requestBody) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth("bulksms", "bulksms");
         HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
         ResponseEntity<String> stringResponseEntity;
 
-        log.info("URL: {}", BASE_URL);
-        log.info("request: {}", logMessage(entity));
         try {
             stringResponseEntity = restTemplate.exchange(BASE_URL, HttpMethod.POST, entity, String.class);
         } catch (Exception e) {
             log.info("Call api fail: ", e);
-            return "failed";
+            return;
         }
         log.info("response: {}", logMessage(stringResponseEntity.getBody()));
 
-        return stringResponseEntity.getBody();
+        stringResponseEntity.getBody();
 
     }
 

@@ -15,9 +15,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,36 +43,24 @@ public class UniversityController {
     @CrossOrigin
     @Secured("ROLE_ADMIN")
     BaseResponse createUniversity(@RequestBody University university) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         if (university == null) {
-            response.setStatus(false);
-            response.setMessage("No university data!");
-            return response;
+            return new BaseResponse(false, null,LocalDateTime.now(),"Fail to create!!");
         }
         try {
             university = universityRepository.save(new University(university.getName(), university.getAddress(), LocalDateTime.now(), null));
-            response.setResult(university);
-            response.setStatus(true);
-            response.setMessage("Success");
+            return new BaseResponse(true, university,LocalDateTime.now(),"Success!!");
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Failure");
-            log.info("Exception : ", e);
+            return new BaseResponse(false, null,LocalDateTime.now(),"Fail!!");
         }
-        return response;
     }
 
     @PostMapping("/upload/{id}")
     @CrossOrigin
     @Secured("ROLE_ADMIN")
     BaseResponse uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
+
         if (file.isEmpty()) {
-            response.setStatus(false);
-            response.setMessage("No file found");
-            return response;
+            return new BaseResponse(false, null,LocalDateTime.now(),"Fail to upload!!");
         }
         try {
             byte[] bytes = file.getBytes();
@@ -83,20 +71,13 @@ public class UniversityController {
                 University university = optionalUniversity.get();
                 university.setImageUrl(path.toString());
                 universityRepository.save(university);
-                response.setStatus(true);
-                response.setResult(university);
-                response.setMessage("File upload successful!!");
+                return new BaseResponse(true, university,LocalDateTime.now(),"Successfully upload!");
             } else {
-                response.setStatus(false);
-                response.setMessage("File upload Fail!!");
+                return new BaseResponse(false, null,LocalDateTime.now(),"Fail to upload");
             }
         } catch (Exception e) {
-            log.info("Exception : ", e);
-            response.setStatus(false);
-            response.setMessage("File upload Fail!!");
+            return new BaseResponse(false, null,LocalDateTime.now(),"Fail to upload");
         }
-        return response;
-
     }
 
 
@@ -104,12 +85,8 @@ public class UniversityController {
     @CrossOrigin
     @Secured("ROLE_ADMIN")
     BaseResponse updateUniversity(@PathVariable Long id, @RequestBody University university) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         if (university == null) {
-            response.setStatus(false);
-            response.setMessage("No request body");
-            return response;
+            return new BaseResponse(false, null,LocalDateTime.now(),"No request body");
         }
         try {
             Optional<University> optionalUniversity = universityRepository.findById(id);
@@ -120,73 +97,53 @@ public class UniversityController {
                 u.setImageUrl(university.getImageUrl());
                 u.setCreatedAt(u.getCreatedAt());
                 universityRepository.save(u);
-                response.setResult(u);
-                response.setStatus(true);
-                response.setMessage("Successfully updated");
+                return new BaseResponse(true, u,LocalDateTime.now(),"Successfully update");
             } else {
-                response.setStatus(false);
-                response.setMessage("Fail to update");
+                return new BaseResponse(false, null,LocalDateTime.now(),"No university with that ID");
             }
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Fail to update");
-            log.info("Exception : ", e);
+            return new BaseResponse(false, null,LocalDateTime.now(),"Fail to update");
         }
-        return response;
     }
 
     @DeleteMapping("{id}")
     @CrossOrigin
     @Secured("ROLE_ADMIN")
     BaseResponse deleteUniversity(@PathVariable Long id) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         try {
             Optional<University> optionalUniversity = universityRepository.findById(id);
             if (optionalUniversity.isPresent()) {
-                University p = optionalUniversity.get();
+                University u = optionalUniversity.get();
                 universityRepository.deleteById(id);
-                response.setStatus(true);
-                response.setMessage("Success");
-                response.setResult(p);
+                return new BaseResponse(true, u,LocalDateTime.now(),"Successfully delete");
             } else {
-                response.setStatus(false);
-                response.setResult("There is no data with that ID.");
+                return new BaseResponse(false, null,LocalDateTime.now(),"No university with that ID");
             }
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setResult("Fail!");
-            log.info("Exception : ", e);
+            return new BaseResponse(false, null,LocalDateTime.now(),"Fail to update");
         }
-        return response;
     }
 
 
     @GetMapping()
     @CrossOrigin
     BaseResponse getAllUniversities() {
-        List<UniversityResponse> universityResponseList = new ArrayList<>();
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         try {
-            response.setStatus(true);
-            for (University university : universityRepository.findAll()) {
-                UniversityResponse universityResponse = new UniversityResponse(
-                        university.getId(),
-                        university.getName(),
-                        university.getCreatedAt(),
-                        university.getImageUrl() == null ? null : util.encodeFileToBase64Binary(university.getImageUrl()),
-                        university.getAddress()
-                );
-                universityResponseList.add(universityResponse);
-            }
-            response.setResult(universityResponseList);
-            response.setMessage("Success");
+            List<UniversityResponse> universityResponseList= universityRepository.findAll().stream().map(this::convertFromUniversity).collect(Collectors.toList());
+            return new BaseResponse(true,universityResponseList,LocalDateTime.now(),"Success!!");
         } catch (Exception e) {
-            log.info("Exception : ", e);
-            response.setMessage("Failure");
-            response.setStatus(false);
+            return new BaseResponse(false,null,LocalDateTime.now(),"Fail!!");
+
         }
-        return response;
+    }
+
+    UniversityResponse convertFromUniversity(University university){
+        return new UniversityResponse(
+                university.getId(),
+                university.getName(),
+                university.getCreatedAt(),
+                university.getImageUrl() == null ? null : util.encodeFileToBase64Binary(university.getImageUrl()),
+                university.getAddress()
+        );
     }
 }

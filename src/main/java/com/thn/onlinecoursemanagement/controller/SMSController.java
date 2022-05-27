@@ -17,7 +17,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 public class SMSController {
-    final SMSHistoryRepository smsHistoryRepository;
+    private final SMSHistoryRepository smsHistoryRepository;
 
     public SMSController(SMSHistoryRepository smsHistoryRepository) {
         this.smsHistoryRepository = smsHistoryRepository;
@@ -26,18 +26,11 @@ public class SMSController {
     @GetMapping()
     @CrossOrigin
     BaseResponse getALlSMS() {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         try {
-            response.setStatus(true);
-            response.setResult(smsHistoryRepository.findAll());
-            response.setMessage("Success");
+            return new BaseResponse(true, smsHistoryRepository.findAll(),LocalDateTime.now(),"Success");
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Fail");
-            log.info("Exception : ", e);
+            return new BaseResponse(false, null,LocalDateTime.now(),"Fail");
         }
-        return response;
     }
 
     @DeleteMapping()
@@ -50,18 +43,15 @@ public class SMSController {
             if (smsHistoryOptional.isPresent()) {
                 SMSHistory smsHistory = smsHistoryOptional.get();
                 smsHistoryRepository.deleteById(id);
-                response.setResult(smsHistory);
-                response.setStatus(true);
-                response.setMessage("Successfully Deleted.");
+                return new BaseResponse(true, smsHistory,LocalDateTime.now(),"Successfully deleted");
+
             } else {
-                response.setStatus(false);
-                response.setMessage("No Id found.");
+                return new BaseResponse(false, null,LocalDateTime.now(),"No SMS with that ID");
+
             }
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Fail");
-            log.info("Exception : ", e);
+            return new BaseResponse(false, null,LocalDateTime.now(),"Fail to delete");
+
         }
-        return response;
     }
 }

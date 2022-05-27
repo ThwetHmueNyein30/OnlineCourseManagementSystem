@@ -22,6 +22,7 @@ public final class Constant {
     //ewallet_info
     public static final String EWALLET_INFO_QUERY ="select * from ewallet.EWALLET_INFO  where ownerId= ?";
     public static final String EWALLET_INFO_UPDATE_QUERY = "update ewallet.EWALLET_INFO  set balance = balance - ? where id = ?";
+    public static final String EWALLET_INFO_UPDATE_VALUE_QUERY = "update ewallet.EWALLET_INFO  set balance = ? where id = ?";
     public static final String EWALLET_INFO_INSERT_QUERY = "insert into ewallet.EWALLET_INFO (ownerId, createdAt, balance, accountName) values (?, ?,?,?)";
 
     //ewallet_history
