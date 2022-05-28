@@ -110,6 +110,12 @@ public class EWalletInfoImpl implements EWalletInfoService {
     @Override
     public BaseResponse updateEWalletInfo(Long ownerId, EWalletInfo info) {
 
+        if(ownerId==null){
+            return new BaseResponse(false, null,LocalDateTime.now(),"No person for that id");
+        }
+        if(info==null){
+            return new BaseResponse(false, null,LocalDateTime.now(),"No eWallet data");
+        }
         EWalletInfo eWalletInfo;
         try {
             eWalletInfo = template.queryForObject(appConfig.getEWallet().getInfoQuery(), new Object[]{info.getOwnerId()}, new EWalletInfoMapper());

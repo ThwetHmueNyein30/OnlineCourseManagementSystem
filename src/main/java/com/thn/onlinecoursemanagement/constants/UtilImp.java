@@ -155,13 +155,15 @@ public class UtilImp implements Util {
 
     @Override
     public String encodeFileToBase64Binary(String imgUrl) {
+        if(imgUrl == null){
+            return null;
+        }
         try {
             File file = new File(imgUrl);
             FileInputStream fileInputStreamReader = new FileInputStream(file);
             byte[] bytes = new byte[(int) file.length()];
             fileInputStreamReader.read(bytes);
-            log.info("Encoded String: {} ", new String(Base64.encodeBase64(bytes), StandardCharsets.UTF_8));
-            String imageData= "data:image/png;base64," + new String(Base64.encodeBase64(bytes), StandardCharsets.UTF_8);
+            String imageData= new String(Base64.encodeBase64(bytes), StandardCharsets.UTF_8);
             return imageData;
         } catch (Exception e) {
             log.info("Exception : ", e);

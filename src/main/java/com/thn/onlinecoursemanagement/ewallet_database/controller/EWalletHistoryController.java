@@ -29,18 +29,10 @@ public class EWalletHistoryController {
     @CrossOrigin
     @Secured({"ROLE_STUDENT"})
     BaseResponse getAllEWalletHistory(@PathVariable Long id) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         try {
-            response.setStatus(true);
-            response.setResult(eWalletHistoryService.getAllEWalletHistory(id));
-            response.setMessage("Success");
-            return response;
+            return new BaseResponse(true,eWalletHistoryService.getAllEWalletHistory(id),LocalDateTime.now(),"Success");
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Failure");
-            log.info("Exception : ", e);
-            return response;
+            return new BaseResponse(false,null,LocalDateTime.now(),"Fail");
         }
     }
 
@@ -48,23 +40,14 @@ public class EWalletHistoryController {
     @CrossOrigin
     @Secured({"ROLE_ADMIN"})
     BaseResponse createEWalletHistory(@RequestBody EWalletHistory eWalletHistory) {
-        BaseResponse response = new BaseResponse();
-        response.setDateTime(LocalDateTime.now());
         if (eWalletHistory == null) {
-            response.setStatus(false);
-            response.setMessage("No request body");
-            return response;
+            return new BaseResponse(false,null,LocalDateTime.now(),"No request Body");
         }
         try {
             eWalletHistoryService.insertEWalletHistory(eWalletHistory);
-            response.setResult(eWalletHistory);
-            response.setStatus(true);
-            response.setMessage("Successfully upload!");
+            return new BaseResponse(true,eWalletHistory,LocalDateTime.now(),"Insert data success");
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Fail to upload");
-            log.info("Exception : ", e);
+            return new BaseResponse(false,null,LocalDateTime.now(),"Fail");
         }
-        return response;
     }
 }

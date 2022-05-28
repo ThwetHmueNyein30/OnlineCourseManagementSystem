@@ -94,7 +94,6 @@ public class UniversityController {
                 University u = optionalUniversity.get();
                 u.setName(university.getName());
                 u.setAddress(university.getAddress());
-                u.setImageUrl(university.getImageUrl());
                 u.setCreatedAt(u.getCreatedAt());
                 u = universityRepository.save(u);
                 return new BaseResponse(true, u,LocalDateTime.now(),"Successfully update");

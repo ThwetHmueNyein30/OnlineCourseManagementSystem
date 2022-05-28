@@ -110,7 +110,6 @@ public class CourseController {
                 c.setRegisteredFrom(course.getRegisteredFrom());
                 c.setStatus(course.getStatus());
                 c.setTeacherId(course.getTeacherId());
-                c.setImageUrl(course.getImageUrl());
                 c.setCreatedAt(c.getCreatedAt());
                 c = courseRepository.save(c);
                 return new BaseResponse(true, c, LocalDateTime.now(), "Successfully updated");

@@ -36,19 +36,14 @@ public class EWalletInfoController {
     BaseResponse getEWalletInfo() {
         BaseResponse response = new BaseResponse();
         response.setDateTime(LocalDateTime.now());
-        log.info("KeyCloak : {}", keycloakService.getUserKeycloakId());
         Person person=eWalletInfoService.getPerson(keycloakService.getUserKeycloakId());
-        log.info("Person : {}", person);
+        if(person==null){
+            return new BaseResponse(false, null, LocalDateTime.now(),"No person data found");
+        }
         try {
-            response.setStatus(true);
-            response.setResult(eWalletInfoService.getInfoByPersonId(person.getId()));
-            response.setMessage("Success");
-            return response;
+            return new BaseResponse(true,eWalletInfoService.getInfoByPersonId(person.getId()),LocalDateTime.now(),"Success");
         } catch (Exception e) {
-            response.setStatus(false);
-            response.setMessage("Failure");
-            log.info("Exception : ", e);
-            return response;
+            return new BaseResponse(false, null, LocalDateTime.now(),"Fail");
         }
     }
 

@@ -62,7 +62,6 @@ public class CompanyController {
     @Secured("ROLE_ADMIN")
     @CrossOrigin
     BaseResponse uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        log.info("Response : {} ", file);
         if (file.isEmpty()) {
             return new BaseResponse(false, null, LocalDateTime.now(), "No file found");
         }
@@ -101,7 +100,6 @@ public class CompanyController {
                 Company c = optionalCompany.get();
                 c.setName(company.getName());
                 c.setAddress(company.getAddress());
-                c.setImageUrl(company.getImageUrl());
                 c= companyRepository.save(c);
                 return new BaseResponse(true, c, LocalDateTime.now(), "Successfully Updated");
             } else {
@@ -142,6 +140,7 @@ public class CompanyController {
     }
 
     CompanyResponse convertFromCompany(Company company) {
+        log.info("ConvertFromCompany : {} ",company);
         return new CompanyResponse(
                 company.getId(),
                 company.getName(),
